@@ -22,6 +22,7 @@ public class TeleOp extends LinearOpMode {
 
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        serAc2.setDirection(Servo.Direction.REVERSE);
 
         serAc1.setPosition(0);
         serAc2.setPosition(0);
@@ -35,23 +36,24 @@ public class TeleOp extends LinearOpMode {
             double lx = gamepad1.left_stick_x;
             double ly = gamepad1.left_stick_y;
             double rx = gamepad1.right_stick_x;
-            double ly2 = gamepad1.left_stick_y;
 
             fl.setPower(ly + lx - rx);
             fr.setPower(ly - lx + rx);
             bl.setPower(ly - lx - rx);
             br.setPower(ly + lx + rx);
-            while (gamepad2.dpad_up == true) {
+            if (gamepad1.dpad_up || gamepad2.dpad_up == true) {
                 dcAc1.setPower(1);
                 dcAc2.setPower(1);
+                }
                 if (gamepad2.dpad_up == false) {
                     dcAc1.setPower(0);
                     dcAc2.setPower(0);
                 }
-            }
-            while (gamepad2.dpad_down == true) {
-                dcAc1.setPower(-1);
-                dcAc2.setPower(-1);
+            if (gamepad2.dpad_down == true) {
+                while (gamepad2.dpad_down == true) {
+                    dcAc1.setPower(-1);
+                    dcAc2.setPower(-1);
+                }
                 if (gamepad2.dpad_up == false) {
                     dcAc1.setPower(0);
                     dcAc2.setPower(0);
