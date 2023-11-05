@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
@@ -54,9 +53,9 @@ import java.util.concurrent.TimeUnit;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  *
  */
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Omni Drive To AprilTag", group = "Concept")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous
 
-public class AutonomousPayload extends LinearOpMode {
+public class Payload_Autonomous extends LinearOpMode {
     // Adjust these numbers to suit your robot.
     final double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
 
@@ -195,10 +194,10 @@ public class AutonomousPayload extends LinearOpMode {
      */
     public void moveRobot(double x, double y, double yaw) {
         // Calculate wheel powers.
-        double leftFrontPower    =  -x - y + yaw;
-        double rightFrontPower   =  -x + y - yaw;
-        double leftBackPower     =  -x + y + yaw;
-        double rightBackPower    =  -x - y - yaw;
+        double leftFrontPower    =  -x + y + yaw;
+        double rightFrontPower   =  -x - y - yaw;
+        double leftBackPower     =  -x - y + yaw;
+        double rightBackPower    =  -x + y - yaw;
 
         // Normalize wheel powers to be less than 1.0
         double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));

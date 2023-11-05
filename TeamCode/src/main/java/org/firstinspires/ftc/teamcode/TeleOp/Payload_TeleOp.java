@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
 
-public class TeleOp extends LinearOpMode {
+public class Payload_TeleOp extends LinearOpMode {
     private DcMotor fr, fl, br, bl, dcAc1, dcAc2, dcIn1, dcIn2;
     private Servo serAc1, serAc2;
 
