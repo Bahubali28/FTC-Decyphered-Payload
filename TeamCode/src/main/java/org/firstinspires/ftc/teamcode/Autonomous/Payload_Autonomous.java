@@ -81,7 +81,8 @@ public class Payload_Autonomous extends LinearOpMode {
     public AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     public AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
     double exe;
-    @Override public void runOpMode()
+    @Override
+    public void runOpMode()
     {
         boolean targetFound     = false;    // Set to true when an AprilTag target is detected
         double  drive           = 0;        // Desired forward power/speed (-1 to +1)
@@ -170,9 +171,10 @@ public class Payload_Autonomous extends LinearOpMode {
             } while (exe <= 1); {
                 telemetry.addLine("exe");
                 telemetry.update();
-                exe = 0;
+                sleep(1000);
                 telemetry.clear();
                 telemetry.update();
+                exe = 0;
             }
         }
     }
