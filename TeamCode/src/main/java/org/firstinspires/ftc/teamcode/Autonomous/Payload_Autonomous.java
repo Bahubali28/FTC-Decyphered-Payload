@@ -80,10 +80,9 @@ public class Payload_Autonomous extends LinearOpMode {
     public VisionPortal visionPortal;               // Used to manage the video source.
     public AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     public AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
-    double exe;
+    int exe;
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() throws InterruptedException {
         boolean targetFound     = false;    // Set to true when an AprilTag target is detected
         double  drive           = 0;        // Desired forward power/speed (-1 to +1)
         double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
@@ -118,6 +117,15 @@ public class Payload_Autonomous extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            fr.setPower(-1);
+            fl.setPower(-1);
+            br.setPower(-1);
+            bl.setPower(-1);
+            TimeUnit.MILLISECONDS.sleep(300);
+            fr.setPower(0);
+            fl.setPower(0);
+            br.setPower(0);
+            bl.setPower(0);
             do {
                 targetFound = false;
                 desiredTag = null;
@@ -145,7 +153,6 @@ public class Payload_Autonomous extends LinearOpMode {
 
                 // Tell the driver what we see, and what to do.
                 if (targetFound) {
-                    telemetry.addData("\n>", "HOLD Left-Bumper to Drive to Target\n");
                     telemetry.addData("Found", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
                     telemetry.addData("Range", "%5.1f inches", desiredTag.ftcPose.range);
                     telemetry.addData("Bearing", "%3.0f degrees", desiredTag.ftcPose.bearing);
@@ -168,14 +175,13 @@ public class Payload_Autonomous extends LinearOpMode {
                 // Apply desired axes motions to the drivetrain.
                 moveRobot(drive, strafe, turn);
                 sleep(10);
-            } while (exe <= 1); {
+            } while (exe <= 1);
                 telemetry.addLine("exe");
                 telemetry.update();
                 sleep(1000);
                 telemetry.clear();
                 telemetry.update();
                 exe = 0;
-            }
         }
     }
 
@@ -248,7 +254,7 @@ public class Payload_Autonomous extends LinearOpMode {
      Manually set the camera gain and exposure.
      This can only be called AFTER calling initAprilTag(), and only works for Webcams;
     */
-    private void    setManualExposure(int exposureMS, int gain) {
+    private void setManualExposure(int exposureMS, int gain) {
         // Wait for the camera to be open, then use the controls
 
         if (visionPortal == null) {
