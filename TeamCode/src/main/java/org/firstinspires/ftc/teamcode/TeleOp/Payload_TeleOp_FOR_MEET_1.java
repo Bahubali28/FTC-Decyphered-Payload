@@ -67,10 +67,13 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
             serIn2.setPower(-rt);
             serIn1.setPower(-lt);
             serIn2.setPower(lt);
-
-            if (gamepad2.dpad_up == false || gamepad1.dpad_up == false ) {
-                dcAc1.setPower(0);
-                dcAc2.setPower(0);
+            if (gamepad2.dpad_up == true || gamepad1.dpad_up == true) {
+                dcAc1.setPower(1);
+                dcAc1.setPower(1);
+                if (gamepad2.dpad_up == false || gamepad1.dpad_up == false) {
+                    dcAc1.setPower(0);
+                    dcAc2.setPower(0);
+                }
             }
             if (gamepad2.dpad_down == true || gamepad1.dpad_down == true) {
                 while (gamepad2.dpad_down == true) {
