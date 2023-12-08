@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
     private DcMotor fr, fl, br, bl, dcAc1, dcAc2;
-    private Servo serAc1, serAc2, serIn5, serIn4;
+    private Servo serAc1, serAc2, serIn5, serIn4, serAir;
     private CRServo serIn1, serIn2;
 
     public void runOpMode() {
@@ -19,7 +19,7 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
         fr = hardwareMap.get(DcMotor.class, "fr");
         bl = hardwareMap.get(DcMotor.class, "bl");
         dcAc1 = hardwareMap.get(DcMotor.class, "dcAc1");
-
+        serAir = hardwareMap.get(Servo.class, "serAir");
         dcAc2 = hardwareMap.get(DcMotor.class, "dcAc2");
         serAc1 = hardwareMap.get(Servo.class, "serAc1");
         serAc2 = hardwareMap.get(Servo.class, "serAc2");
@@ -31,8 +31,10 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         serAc2.setDirection(Servo.Direction.REVERSE);
         serIn4.setDirection(Servo.Direction.REVERSE);
+        serAir.setDirection(Servo.Direction.REVERSE);
         serAc1.setPosition(0);
         serAc2.setPosition(0);
+        serAir.setPosition(0);
         telemetry.addLine("Motors Assigned and Attached");
         telemetry.addLine(String.valueOf(serAc1.getPosition()));
         telemetry.addLine(String.valueOf(serAc2.getPosition()));
@@ -101,6 +103,9 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
             if (gamepad2.left_bumper == true) {
                 serIn5.setPosition(60);
                 serIn4.setPosition(60);
+            }
+            if (gamepad2.x == true) {
+                serAir.setPosition(60);
             }
         }
     }
