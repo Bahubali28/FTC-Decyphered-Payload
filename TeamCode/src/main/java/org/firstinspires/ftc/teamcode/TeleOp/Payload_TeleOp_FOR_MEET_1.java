@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
     private DcMotor fr, fl, br, bl, dcAc1, dcAc2;
-    private Servo serAc1, serAc2, serIn5, serIn4, serAir;
+    private Servo serAc1, serAc2, serIn5, serAir;
     private CRServo serIn1, serIn2;
 
     public void runOpMode() {
@@ -26,11 +26,9 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
         serIn1 = hardwareMap.get(CRServo.class, "serIn1");
         serIn2 = hardwareMap.get(CRServo.class, "serIn2");
         serIn5 = hardwareMap.get(Servo.class, "serIn3");
-        serIn4 = hardwareMap.get(Servo.class, "serIn4");
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         serAc2.setDirection(Servo.Direction.REVERSE);
-        serIn4.setDirection(Servo.Direction.REVERSE);
         serAir.setDirection(Servo.Direction.REVERSE);
         serAc1.setPosition(0);
         serAc2.setPosition(0);
@@ -39,7 +37,6 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
         telemetry.addLine(String.valueOf(serAc1.getPosition()));
         telemetry.addLine(String.valueOf(serAc2.getPosition()));
         telemetry.addLine(String.valueOf(serIn5.getPosition()));
-        telemetry.addLine(String.valueOf(serIn4.getPosition()));
         telemetry.update();
         waitForStart();
 
@@ -98,11 +95,13 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
             }
             if (gamepad2.right_bumper == true) {
                 serIn5.setPosition(90);
-                serIn4.setPosition(90);
             }
             if (gamepad2.left_bumper == true) {
                 serIn5.setPosition(60);
-                serIn4.setPosition(60);
+            }
+            if (gamepad2.start == true) {
+                serIn5.setPosition(90);
+                serIn5.setPosition(0);
             }
             if (gamepad2.x == true) {
                 serAir.setPosition(60);
