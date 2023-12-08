@@ -49,7 +49,7 @@ public class Autonomous_RED_BACK extends LinearOpMode {
                 fr.setPower(dis);
                 bl.setPower(dis);
                 br.setPower(dis);
-                TimeUnit.MILLISECONDS.sleep(500);
+                TimeUnit.MILLISECONDS.sleep(700);
             } catch(InterruptedException e){
                 //TODO: handle exception
             }
