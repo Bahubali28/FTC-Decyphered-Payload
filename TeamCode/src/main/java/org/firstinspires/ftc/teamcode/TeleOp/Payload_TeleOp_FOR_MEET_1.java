@@ -25,7 +25,7 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
         serAc2 = hardwareMap.get(Servo.class, "serAc2");
         serIn1 = hardwareMap.get(CRServo.class, "serIn1");
         serIn2 = hardwareMap.get(CRServo.class, "serIn2");
-        serIn5 = hardwareMap.get(Servo.class, "serIn5");
+        serIn5 = hardwareMap.get(Servo.class, "serIn3");
         serIn4 = hardwareMap.get(Servo.class, "serIn4");
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
