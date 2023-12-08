@@ -25,7 +25,7 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
         serAc2 = hardwareMap.get(Servo.class, "serAc2");
         serIn1 = hardwareMap.get(CRServo.class, "serIn1");
         serIn2 = hardwareMap.get(CRServo.class, "serIn2");
-        serIn5 = hardwareMap.get(Servo.class, "serIn3");
+        serIn5 = hardwareMap.get(Servo.class, "serIn5");
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         serAc2.setDirection(Servo.Direction.REVERSE);
@@ -69,21 +69,19 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
             serIn2.setPower(lt);
             if (gamepad2.dpad_up == true || gamepad1.dpad_up == true) {
                 dcAc1.setPower(1);
-                dcAc1.setPower(1);
+                dcAc2.setPower(1);
                 if (gamepad2.dpad_up == false || gamepad1.dpad_up == false) {
                     dcAc1.setPower(0);
                     dcAc2.setPower(0);
                 }
             }
-            if (gamepad2.dpad_down == true || gamepad1.dpad_down == true) {
-                while (gamepad2.dpad_down == true) {
-                    dcAc1.setPower(-1);
-                    dcAc2.setPower(-1);
-                }
-                if (gamepad2.dpad_up == false || gamepad1.dpad_down == false) {
+            if (gamepad2.dpad_down == true) {
+                dcAc1.setPower(-1);
+                dcAc2.setPower(-1);
+                if (gamepad2.dpad_down == false || gamepad1.dpad_down == false) {
                     dcAc1.setPower(0);
                     dcAc2.setPower(0);
-                }
+                    }
             }
             if (gamepad2.y == true) {
                 serAc1.setPosition(0.35);
@@ -105,6 +103,10 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
             }
             if (gamepad2.x == true) {
                 serAir.setPosition(60);
+            }
+            if (gamepad2.back == true) {
+                serAc1.setPosition(45);
+                serAc1.setPosition(60);
             }
         }
     }
