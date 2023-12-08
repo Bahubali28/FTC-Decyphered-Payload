@@ -42,14 +42,14 @@ public class Autonomous_RED_BACK extends LinearOpMode {
                 fr.setPower(0);
                 bl.setPower(0);
                 br.setPower(0);
-                TimeUnit.MILLISECONDS.sleep(500);
+                TimeUnit.MILLISECONDS.sleep(700);
                 telemetry.addLine("Turned right");
                 telemetry.update();
                 fl.setPower(dis); // Motors are in reverse, so the value has to be posative to move sideways
                 fr.setPower(dis);
                 bl.setPower(dis);
                 br.setPower(dis);
-                TimeUnit.MILLISECONDS.sleep(700);
+                TimeUnit.MILLISECONDS.sleep(500);
             } catch(InterruptedException e){
                 //TODO: handle exception
             }
