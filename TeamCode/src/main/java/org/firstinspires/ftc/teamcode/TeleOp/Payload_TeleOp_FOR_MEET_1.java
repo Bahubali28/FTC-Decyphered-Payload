@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
     private DcMotor fr, fl, br, bl, dcAc1, dcAc2;
-    private Servo serAc1, serAc2, serIn3, serIn4;
+    private Servo serAc1, serAc2, serIn5, serIn4;
     private CRServo serIn1, serIn2;
 
     public void runOpMode() {
@@ -19,12 +19,13 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
         fr = hardwareMap.get(DcMotor.class, "fr");
         bl = hardwareMap.get(DcMotor.class, "bl");
         dcAc1 = hardwareMap.get(DcMotor.class, "dcAc1");
+
         dcAc2 = hardwareMap.get(DcMotor.class, "dcAc2");
         serAc1 = hardwareMap.get(Servo.class, "serAc1");
         serAc2 = hardwareMap.get(Servo.class, "serAc2");
         serIn1 = hardwareMap.get(CRServo.class, "serIn1");
         serIn2 = hardwareMap.get(CRServo.class, "serIn2");
-        serIn3 = hardwareMap.get(Servo.class, "serIn3");
+        serIn5 = hardwareMap.get(Servo.class, "serIn5");
         serIn4 = hardwareMap.get(Servo.class, "serIn4");
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -35,7 +36,7 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
         telemetry.addLine("Motors Assigned and Attached");
         telemetry.addLine(String.valueOf(serAc1.getPosition()));
         telemetry.addLine(String.valueOf(serAc2.getPosition()));
-        telemetry.addLine(String.valueOf(serIn3.getPosition()));
+        telemetry.addLine(String.valueOf(serIn5.getPosition()));
         telemetry.addLine(String.valueOf(serIn4.getPosition()));
         telemetry.update();
         waitForStart();
@@ -94,16 +95,12 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
                 serAc2.setPosition(0);
             }
             if (gamepad2.right_bumper == true) {
-                serIn3.setPosition(90);
+                serIn5.setPosition(90);
                 serIn4.setPosition(90);
             }
             if (gamepad2.left_bumper == true) {
-                serIn3.setPosition(60);
+                serIn5.setPosition(60);
                 serIn4.setPosition(60);
-            }
-            if (gamepad2.start == true) {
-                serIn3.setPosition(0);
-                serIn4.setPosition(0);
             }
         }
     }
