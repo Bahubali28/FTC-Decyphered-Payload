@@ -36,7 +36,7 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
         telemetry.addLine("Motors Assigned and Attached");
         telemetry.addLine(String.valueOf(serAc1.getPosition()));
         telemetry.addLine(String.valueOf(serAc2.getPosition()));
-        telemetry.addLine(String.valueOf(serIn5.getPosition()));
+        telemetry.addLine("SerIn5: " + String.valueOf(serIn5.getPosition()));
         telemetry.update();
         waitForStart();
 
@@ -92,14 +92,16 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
                 serAc2.setPosition(0);
             }
             if (gamepad2.right_bumper == true) {
+                serIn5.setPosition(0.5);
                 serIn5.setPosition(0.35);
             }
             if (gamepad2.left_bumper == true) {
-                serIn5.setPosition(70);
+                serIn5.setPosition(0.8);
+                serIn5.setPosition(0.75);
             }
             if (gamepad2.start == true) {
-                serIn5.setPosition(90);
-                serIn5.setPosition(110);
+                serIn5.setPosition(1.0);
+
             }
             if (gamepad2.x == true) {
                 serAir.setPosition(60);
