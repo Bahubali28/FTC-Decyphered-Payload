@@ -92,14 +92,14 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
                 serAc2.setPosition(0);
             }
             if (gamepad2.right_bumper == true) {
-                serIn5.setPosition(60);
+                serIn5.setPosition(0.60);
             }
             if (gamepad2.left_bumper == true) {
-                serIn5.setPosition(0);
+                serIn5.setPosition(70);
             }
             if (gamepad2.start == true) {
                 serIn5.setPosition(90);
-                serIn5.setPosition(180);
+                serIn5.setPosition(100);
             }
             if (gamepad2.x == true) {
                 serAir.setPosition(60);
