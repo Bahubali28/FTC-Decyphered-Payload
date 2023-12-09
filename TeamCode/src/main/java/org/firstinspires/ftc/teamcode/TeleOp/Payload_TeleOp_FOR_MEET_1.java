@@ -92,7 +92,7 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
                 serAc2.setPosition(0);
             }
             if (gamepad2.right_bumper == true) {
-                serIn5.setPosition(0.60);
+                serIn5.setPosition(0.35);
             }
             if (gamepad2.left_bumper == true) {
                 serIn5.setPosition(70);
@@ -105,8 +105,8 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
                 serAir.setPosition(60);
             }
             if (gamepad2.back == true) {
-                serAc1.setPosition(45);
-                serAc1.setPosition(60);
+                serAc2.setPosition(45);
+                serAc2.setPosition(60);
             }
         }
     }
