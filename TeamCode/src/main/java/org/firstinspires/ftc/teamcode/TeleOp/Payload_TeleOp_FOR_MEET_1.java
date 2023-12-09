@@ -30,6 +30,7 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         serAc2.setDirection(Servo.Direction.REVERSE);
         serAir.setDirection(Servo.Direction.REVERSE);
+        serIn5.setDirection(Servo.Direction.REVERSE);
         serAc1.setPosition(0);
         serAc2.setPosition(0);
         serAir.setPosition(0);
@@ -37,8 +38,8 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
         telemetry.addLine("SerAc1 Pos: " + serAc1.getPosition());
         telemetry.addLine("SerAc2 Pos: " + serAc2.getPosition());
         telemetry.addLine("SerIn5: " + String.valueOf(serIn5.getPosition()));
-        serIn5.setPosition(0);
         telemetry.addLine("SerIn5 Updated: " + String.valueOf(serIn5.getPosition()));
+        serIn5.setPosition(0);
         telemetry.update();
         waitForStart();
 
@@ -88,19 +89,21 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
             if (gamepad2.y == true) {
                 serAc1.setPosition(0.35);
                 serAc2.setPosition(0.35);
+                telemetry.addLine("serAc1" + serAc1.getPosition());
+                telemetry.update();
             }
             if (gamepad2.a == true) {
                 serAc1.setPosition(0);
                 serAc2.setPosition(0);
             }
             if (gamepad2.right_bumper == true) {
-                serIn5.setPosition(0.9);
+                serIn5.setPosition(0.35);
             }
             if (gamepad2.left_bumper == true) {
                 serIn5.setPosition(0.55);
             }
             if (gamepad2.start == true) {
-                serIn5.setPosition(0.65);
+                serIn5.setPosition(0.45);
 
             }
             if (gamepad2.x == true) {
