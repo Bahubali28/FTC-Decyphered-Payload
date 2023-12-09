@@ -99,7 +99,7 @@ public class Payload_TeleOp_FOR_MEET_1 extends LinearOpMode {
             }
             if (gamepad2.start == true) {
                 serIn5.setPosition(90);
-                serIn5.setPosition(100);
+                serIn5.setPosition(110);
             }
             if (gamepad2.x == true) {
                 serAir.setPosition(60);
