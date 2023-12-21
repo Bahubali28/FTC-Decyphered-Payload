@@ -1,30 +1,9 @@
-/*
- * Copyright (c) 2021 OpenFTC Team
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 package org.firstinspires.ftc.teamcode.Autonomous;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -35,12 +14,13 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
-
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
 @TeleOp
 public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 {
+    private DcMotor fr, fl, bl, br;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -58,15 +38,66 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     // UNITS ARE METERS
     double tagsize = 0.166;
 
-    int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
+    int id_tag = 1; // Tag ID 18 from the 36h11 family
     int LEFT = 1;
     int MIDDLE = 2;
     int RIGHT = 3;
+    double dis = 0.5;
     AprilTagDetection tagOfInterest = null;
+    public void moveForward(double power) {
+        fl.setPower(power);
+        fr.setPower(power);
+        bl.setPower(power);
+        br.setPower(power);
+    }
+    public void moveBackward(double power) {
+        fl.setPower(-power);
+        fr.setPower(-power);
+        bl.setPower(-power);
+        br.setPower(-power);
+    }
+    public void turnLeft(double power) {
+        fl.setPower(-power);
+        fr.setPower(power);
+        bl.setPower(-power);
+        br.setPower(power);
+    }
+    public void turnRight(double power) {
+        fl.setPower(power);
+        fr.setPower(-power);
+        bl.setPower(power);
+        br.setPower(-power);
+    }
+    public void strafeRight(double power) {
+        fl.setPower(power);
+        fr.setPower(-power);
+        bl.setPower(-power);
+        br.setPower(power);
+    }
+    public void strafeLeft(double power) {
+        fl.setPower(-power);
+        fr.setPower(power);
+        bl.setPower(power);
+        br.setPower(-power);
+    }
+    public void Idle(double power) {
+        fl.setPower(power);
+        fr.setPower(power);
+        bl.setPower(power);
+        br.setPower(power);
+    }
 
     @Override
     public void runOpMode()
     {
+        fr = hardwareMap.get(DcMotor.class, "fr");
+        fl = hardwareMap.get(DcMotor.class, "fl");
+        bl = hardwareMap.get(DcMotor.class, "bl");
+        br = hardwareMap.get(DcMotor.class, "br");
+
+        fr.setDirection(DcMotorSimple.Direction.REVERSE);
+        br.setDirection(DcMotorSimple.Direction.REVERSE);
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -81,8 +112,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             }
 
             @Override
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
 
             }
         });
@@ -118,6 +148,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
                 }
                 else
                 {
+                    Idle(0);
                     telemetry.addLine("Don't see tag of interest :(");
 
                     if(tagOfInterest == null)
@@ -134,6 +165,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             }
             else
             {
+                Idle(0);
                 telemetry.addLine("Don't see tag of interest :(");
 
                 if(tagOfInterest == null)
@@ -173,10 +205,31 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         /* Actually do something useful */
         if(tagOfInterest == null)
         {
-            /*
-             * Insert your autonomous code here, presumably running some default configuration
-             * since the tag was never sighted during INIT
-             */
+            try{
+	/* 1. Move forward by 2 inches
+	2. Move sideways through
+	the bar to the backdrop */
+
+                fl.setPower(-dis); // Motors are in reverse, so the value has to be negative to move forward
+                fr.setPower(dis);
+                bl.setPower(-dis);
+                br.setPower(dis);
+                TimeUnit.MILLISECONDS.sleep(500);
+                fl.setPower(0); // Motors are in reverse, so the value has to be negative to move forward
+                fr.setPower(0);
+                bl.setPower(0);
+                br.setPower(0);
+                TimeUnit.MILLISECONDS.sleep(700);
+                telemetry.addLine("Turned right");
+                telemetry.update();
+                fl.setPower(dis); // Motors are in reverse, so the value has to be posative to move sideways
+                fr.setPower(dis);
+                bl.setPower(dis);
+                br.setPower(dis);
+                TimeUnit.MILLISECONDS.sleep(500);
+            } catch(InterruptedException e){
+                //TODO: handle exception
+            }
         }
         else
         {
@@ -185,17 +238,23 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
              */
 
             // e.g.
-            if(tagOfInterest.pose.x <= 20)
-            {
-                // do something
+            double deadzone = 0.01;
+            double safety = 1;
+            if(tagOfInterest.pose.x > deadzone) {
+                // turn clockwise
+                turnRight(0.5);
             }
-            else if(tagOfInterest.pose.x >= 20 && tagOfInterest.pose.x <= 50)
-            {
-                // do something else
+            else if(tagOfInterest.pose.x < -deadzone) {
+                // turn counterclockwise
+                turnLeft(0.5);
             }
-            else if(tagOfInterest.pose.x >= 50)
-            {
-                // do something else
+            else {
+                Idle(0);
+            }
+            if (tagOfInterest.pose.z > safety){
+                moveForward(0.5);
+            } else {
+                Idle(0);
             }
         }
 
