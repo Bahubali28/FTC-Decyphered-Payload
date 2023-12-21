@@ -227,7 +227,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
                 bl.setPower(dis);
                 br.setPower(dis);
                 TimeUnit.MILLISECONDS.sleep(500);
-            } catch(InterruptedException e){
+            } catch(InterruptedException e) {
                 //TODO: handle exception
             }
         }
