@@ -18,8 +18,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "Autonomous_RED_FRONT", group = "Payload_TeleOp_FOR_MEET_1")
-public class Autonomous_RED_FRONT extends LinearOpMode
+@Autonomous(name = "Autonomous_BLUE_BACK", group = "Payload_TeleOp_FOR_MEET_1")
+public class Autonomous_BLUE_BACK extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -107,10 +107,12 @@ public class Autonomous_RED_FRONT extends LinearOpMode
             TimeUnit.MILLISECONDS.sleep(785);
             Idle(0);
             TimeUnit.MILLISECONDS.sleep(700);
-            turnLeft(0.5);
-            telemetry.addLine("Turned right");
+            turnRight(0.5);
+            telemetry.addLine("Turned left");
             telemetry.update();
             TimeUnit.MILLISECONDS.sleep(710);
+            moveForward(0.5);
+            TimeUnit.SECONDS.sleep(2);
         } catch(InterruptedException e){
             //TODO: handle exception
         }

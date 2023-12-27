@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -14,13 +14,14 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-@TeleOp
+@Autonomous(name = "AprilTagAutonomousInitDetectionExample", group = "Payload_TeleOp_FOR_MEET_1")
 public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 {
-    private DcMotor fr, fl, bl, br;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -38,17 +39,18 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     // UNITS ARE METERS
     double tagsize = 0.166;
 
-    int id_tag = 1; // Tag ID 18 from the 36h11 family
+    int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
     int LEFT = 1;
     int MIDDLE = 2;
     int RIGHT = 3;
-    double dis = 0.5;
     AprilTagDetection tagOfInterest = null;
+    private DcMotor fr, fl, bl, br;
+
     public void moveForward(double power) {
-        fl.setPower(power);
-        fr.setPower(power);
-        bl.setPower(power);
-        br.setPower(power);
+        fl.setPower(-power);
+        fr.setPower(-power);
+        bl.setPower(-power);
+        br.setPower(-power);
     }
     public void moveBackward(double power) {
         fl.setPower(-power);
@@ -86,22 +88,50 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         bl.setPower(power);
         br.setPower(power);
     }
-
     @Override
     public void runOpMode()
     {
-        fr = hardwareMap.get(DcMotor.class, "fr");
         fl = hardwareMap.get(DcMotor.class, "fl");
-        bl = hardwareMap.get(DcMotor.class, "bl");
         br = hardwareMap.get(DcMotor.class, "br");
+        fr = hardwareMap.get(DcMotor.class, "fr");
+        bl = hardwareMap.get(DcMotor.class, "bl");
+        bl.setDirection(DcMotorSimple.Direction.REVERSE);
+        fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        try{
+	    /*
+	    1. Move forward to the second bar
+	   2. Move sideways through
+	   the bar to the backdrop for 5 points
+	   */
 
-        fr.setDirection(DcMotorSimple.Direction.REVERSE);
-        br.setDirection(DcMotorSimple.Direction.REVERSE);
-
+            fl.setPower(-0.5); // Motors are in reverse, so the value has to be negative to move forward
+            fr.setPower(-0.5);
+            bl.setPower(-0.5);
+            br.setPower(-0.5);
+            TimeUnit.MILLISECONDS.sleep(785);
+            fl.setPower(0); // Motors are in reverse,                                                                       so the value has to be negative to move forward
+            fr.setPower(0);
+            bl.setPower(0);
+            br.setPower(0);
+            TimeUnit.MILLISECONDS.sleep(700);
+            telemetry.addLine("Turned right");
+            telemetry.update();
+            fl.setPower(0.5); // Motors are in reverse, so the value has to be positive to move sideways
+            fr.setPower(-0.5);
+            bl.setPower(0.5);
+            br.setPower(-0.5);
+            TimeUnit.MILLISECONDS.sleep(710);
+            fl.setPower(-0.5); // Motors are in reverse, so the value has to be negative to move forward
+            fr.setPower(-0.5);
+            bl.setPower(-0.5);
+            br.setPower(-0.5);
+            TimeUnit.SECONDS.sleep(2);
+        } catch(InterruptedException e){
+            //TODO: handle exception
+        }
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -112,7 +142,8 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             }
 
             @Override
-            public void onError(int errorCode) {
+            public void onError(int errorCode)
+            {
 
             }
         });
@@ -143,8 +174,32 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
                 if(tagFound)
                 {
+                    double deadzone = 0.1;
+
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
+                    Orientation rot = Orientation.getOrientation(tagOfInterest.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
+                   if (tagOfInterest.pose.z > 1) {
+                        moveForward(1);
+                    } else {
+                        Idle(0);
+                    }
+                    if(tagOfInterest.pose.x < -deadzone) {
+                        strafeLeft(0.5);
+                    }
+                    else if(tagOfInterest.pose.x > deadzone) {
+                        // do something else
+                        strafeRight(0.5);
+                    } else {
+                        Idle(0);
+                    }
+                    if (rot.firstAngle > 20) {
+                        turnLeft(0.5);
+                    } else if (rot.firstAngle < -20) {
+                        turnRight(0.5);
+                    } else {
+                        Idle(0);
+                    }
                 }
                 else
                 {
@@ -205,31 +260,10 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         /* Actually do something useful */
         if(tagOfInterest == null)
         {
-            try{
-	/* 1. Move forward by 2 inches
-	2. Move sideways through
-	the bar to the backdrop */
-
-                fl.setPower(-dis); // Motors are in reverse, so the value has to be negative to move forward
-                fr.setPower(dis);
-                bl.setPower(-dis);
-                br.setPower(dis);
-                TimeUnit.MILLISECONDS.sleep(500);
-                fl.setPower(0); // Motors are in reverse, so the value has to be negative to move forward
-                fr.setPower(0);
-                bl.setPower(0);
-                br.setPower(0);
-                TimeUnit.MILLISECONDS.sleep(700);
-                telemetry.addLine("Turned right");
-                telemetry.update();
-                fl.setPower(dis); // Motors are in reverse, so the value has to be posative to move sideways
-                fr.setPower(dis);
-                bl.setPower(dis);
-                br.setPower(dis);
-                TimeUnit.MILLISECONDS.sleep(500);
-            } catch(InterruptedException e) {
-                //TODO: handle exception
-            }
+            /*
+             * Insert your autonomous code here, presumably running some default configuration
+             * since the tag was never sighted during INIT
+             */
         }
         else
         {
@@ -238,24 +272,6 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
              */
 
             // e.g.
-            double deadzone = 0.01;
-            double safety = 1;
-            if(tagOfInterest.pose.x > deadzone) {
-                // turn clockwise
-                turnRight(0.5);
-            }
-            else if(tagOfInterest.pose.x < -deadzone) {
-                // turn counterclockwise
-                turnLeft(0.5);
-            }
-            else {
-                Idle(0);
-            }
-            if (tagOfInterest.pose.z > safety){
-                moveForward(0.5);
-            } else {
-                Idle(0);
-            }
         }
 
 
