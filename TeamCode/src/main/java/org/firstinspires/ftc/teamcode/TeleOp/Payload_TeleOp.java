@@ -5,13 +5,14 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import java.util.concurrent.TimeUnit;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
 
 public class Payload_TeleOp extends LinearOpMode {
-    private DcMotor fr, fl, br, bl, dcAc1, dcAc2, dcIn1, dcIn2;
-    private Servo serAc1, serAc2;
-    private CRServo serIn1, serIn2, serIn3;
+    private DcMotor fr, fl, br, bl, dcAc1, dcAc2;
+    private Servo serAc1, serAc2, serIn5, serAir;
+    private CRServo serIn1, serIn2;
 
     public void runOpMode() {
         fl = hardwareMap.get(DcMotor.class, "fl");
@@ -19,22 +20,27 @@ public class Payload_TeleOp extends LinearOpMode {
         fr = hardwareMap.get(DcMotor.class, "fr");
         bl = hardwareMap.get(DcMotor.class, "bl");
         dcAc1 = hardwareMap.get(DcMotor.class, "dcAc1");
+        serAir = hardwareMap.get(Servo.class, "serAir");
         dcAc2 = hardwareMap.get(DcMotor.class, "dcAc2");
-        dcIn1 = hardwareMap.get(DcMotor.class, "dcIn1");
-        dcIn2 = hardwareMap.get(DcMotor.class, "dcIn2");
         serAc1 = hardwareMap.get(Servo.class, "serAc1");
         serAc2 = hardwareMap.get(Servo.class, "serAc2");
         serIn1 = hardwareMap.get(CRServo.class, "serIn1");
         serIn2 = hardwareMap.get(CRServo.class, "serIn2");
-        serIn3 = hardwareMap.get(CRServo.class, "serIn3");
+        serIn5 = hardwareMap.get(Servo.class, "serIn5");
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         serAc2.setDirection(Servo.Direction.REVERSE);
-        serAc1.setPosition(0);
-        serAc2.setPosition(0);
+        serAir.setDirection(Servo.Direction.REVERSE);
+        serIn5.setDirection(Servo.Direction.FORWARD);
+        serAc1.setPosition(0.97);
+        serAc2.setPosition(0.97);
+        serAir.setPosition(0);
         telemetry.addLine("Motors Assigned and Attached");
-        telemetry.addLine(String.valueOf(serAc1.getPosition()));
-        telemetry.addLine(String.valueOf(serAc2.getPosition()));
+        telemetry.addLine("SerAc1 Pos: " + serAc1.getPosition());
+        telemetry.addLine("SerAc2 Pos: " + serAc2.getPosition());
+        telemetry.addLine("SerIn5: " + String.valueOf(serIn5.getPosition()));
+        telemetry.addLine("SerIn5 Updated: " + String.valueOf(serIn5.getPosition()));
+        telemetry.addLine("BLAST OFF!!!");
         telemetry.update();
         waitForStart();
 
@@ -65,76 +71,79 @@ public class Payload_TeleOp extends LinearOpMode {
             serIn2.setPower(-rt);
             serIn1.setPower(-lt);
             serIn2.setPower(lt);
-
-            if (gamepad1.right_bumper == true) {
-
+            if (gamepad2.right_stick_y > 0 || gamepad2.right_stick_y < 0){
+                telemetry.addLine("right stick" + gamepad2.right_stick_y);
+                telemetry.update();
             }
-
-            if (gamepad1.dpad_up || gamepad2.dpad_up == true) {
-                dcAc1.setPower(1);
-                dcAc2.setPower(1);
-            }
-            if (gamepad2.dpad_up == false || gamepad1.dpad_up == false ) {
-                dcAc1.setPower(0);
-                dcAc2.setPower(0);
-            }
-            if (gamepad2.dpad_down == true || gamepad1.dpad_down == true) {
-                while (gamepad2.dpad_down == true) {
-                    dcAc1.setPower(-1);
-                    dcAc2.setPower(-1);
-                }
-                if (gamepad2.dpad_up == false || gamepad1.dpad_down == false) {
+            if (gamepad2.dpad_up == true || gamepad1.dpad_up == true) {
+                dcAc1.setPower(1.5);
+                dcAc2.setPower(1.5);
+                if (gamepad2.dpad_up == false || gamepad1.dpad_up == false) {
                     dcAc1.setPower(0);
                     dcAc2.setPower(0);
                 }
             }
+            if (gamepad2.dpad_down == true) {
+                dcAc1.setPower(-1);
+                dcAc2.setPower(-1);
+                if (gamepad2.dpad_down == false || gamepad1.dpad_down == false) {
+                    dcAc1.setPower(0);
+                    dcAc2.setPower(0);
+                    }
+            }
             if (gamepad2.y == true) {
-                serAc1.setPosition(0.35);
-                serAc2.setPosition(0.35);
+                serAc1.setPosition(0.65);
+                serAc2.setPosition(0.65);
+                telemetry.addLine("serAc2 " + serAc2.getPosition());
+                telemetry.update();
             }
             if (gamepad2.a == true) {
-                serAc1.setPosition(0);
-                serAc2.setPosition(0);
-            }
-            while (gamepad2.right_bumper == true) {
-                dcIn2.setPower(0.5);
-                if (gamepad2.right_bumper == false) {
-                    dcIn2.setPower(0.5);
+                serAc1.setPosition(0.78);
+                serAc2.setPosition(0.78);
+                try {
+                    telemetry.addLine("First: serAc2 " + serAc2.getPosition());
+                    telemetry.update();
+                    TimeUnit.SECONDS.sleep(1);
+                    serAc1.setPosition(0.95);
+                    serAc2.setPosition(0.95);
+                    telemetry.addLine("Second: serAc2 " + serAc2.getPosition());
+                    telemetry.update();
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e){
+                    //TODO: handle exception
                 }
+                telemetry.addLine("Final: serAc2 " + serAc2.getPosition());
+                telemetry.update();
+                serAc1.setPosition(0.97);
+                serAc2.setPosition(0.97);
             }
-            while (gamepad2.left_bumper == true) {
-                dcIn2.setPower(0.5);
-                if(gamepad2.left_bumper == false) {
-                    dcIn2.setPower(0);
-                }
+            if (gamepad2.right_bumper == true) {
+                serIn5.setPosition(0);
+                telemetry.addLine("serIn5 " + serIn5.getPosition());
+                telemetry.update();
             }
-            while (gamepad2.x == true) {
-                dcIn2.setPower(-1);
-                dcIn1.setPower(-1);
-                if (gamepad2.x == false) {
-                    dcIn2.setPower(0);
-                    dcIn2.setPower(0);
-                }
+            if (gamepad2.left_bumper == true) {
+                serIn5.setPosition(0.34);
+                telemetry.addLine("serIn5 " + serIn5.getPosition());
+                telemetry.update();
             }
-            while (gamepad2.b== true) {
-                dcIn2.setPower(1);
-                dcIn1.setPower(1);
-                if (gamepad2.b == false) {
-                    dcIn2.setPower(0);
-                    dcIn1.setPower(0);
-                }
+            if (gamepad2.start == true) {
+                serIn5.setPosition(0.13);
+                telemetry.addLine("serIn5 " + serIn5.getPosition());
+                telemetry.update();
             }
-            while (gamepad2.dpad_left == true) {
-                serIn3.setPower(1);
-                if (gamepad2.dpad_left == false) {
-                    serIn3.setPower(0);
-                }
+            if (gamepad2.x == true) {
+                serAir.setPosition(60);
             }
-            while (gamepad2.dpad_left == true) {
-                serIn3.setPower(-1);
-                if (gamepad2.dpad_left == false) {
-                    serIn3.setPower(0);
-                }
+            if (gamepad2.b == true) {
+                serAir.setPosition(0);
+            }
+            if (gamepad2.back == true) {
+                telemetry.addLine("Servo position update:");
+                telemetry.addLine("SerAc1 Pos: " + serAc1.getPosition());
+                telemetry.addLine("SerAc2 Pos: " + serAc2.getPosition());
+                telemetry.addLine("SerIn5: " + String.valueOf(serIn5.getPosition()));
+                telemetry.update();
             }
         }
     }

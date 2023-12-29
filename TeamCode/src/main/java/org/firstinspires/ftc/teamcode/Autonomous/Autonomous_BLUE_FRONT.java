@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "Autonomous_BLUE_FRONT", group = "Payload_TeleOp_FOR_MEET_1")
+@Autonomous(name = "Autonomous_BLUE_FRONT", group = "Autonomous", preselectTeleOp = "Payload_TeleOp")
 public class Autonomous_BLUE_FRONT extends LinearOpMode
 {
     OpenCvCamera camera;
@@ -39,10 +39,11 @@ public class Autonomous_BLUE_FRONT extends LinearOpMode
     double tagsize = 0.166;
 
     int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
-    int LEFT = 1;
-    int MIDDLE = 2;
-    int RIGHT = 3;
+    int LEFT = 4;
+    int MIDDLE = 5;
+    int RIGHT = 6;
     AprilTagDetection tagOfInterest = null;
+    boolean dontre;
     private DcMotor fr, fl, bl, br;
 
     public void moveForward(double power) {
@@ -52,22 +53,22 @@ public class Autonomous_BLUE_FRONT extends LinearOpMode
         br.setPower(-power);
     }
     public void moveBackward(double power) {
-        fl.setPower(power);
-        fr.setPower(power);
-        bl.setPower(power);
-        br.setPower(power);
+        fl.setPower(-power);
+        fr.setPower(-power);
+        bl.setPower(-power);
+        br.setPower(-power);
     }
     public void turnLeft(double power) {
-        fl.setPower(-power);
-        fr.setPower(power);
-        bl.setPower(-power);
-        br.setPower(power);
-    }
-    public void turnRight(double power) {
         fl.setPower(power);
         fr.setPower(-power);
         bl.setPower(power);
         br.setPower(-power);
+    }
+    public void turnRight(double power) {
+        fl.setPower(-power);
+        fr.setPower(power);
+        bl.setPower(-power);
+        br.setPower(power);
     }
     public void strafeRight(double power) {
         fl.setPower(power);
@@ -90,30 +91,16 @@ public class Autonomous_BLUE_FRONT extends LinearOpMode
     @Override
     public void runOpMode()
     {
+        telemetry.addLine("Initializing...");
+        telemetry.update();
         fl = hardwareMap.get(DcMotor.class, "fl");
         br = hardwareMap.get(DcMotor.class, "br");
         fr = hardwareMap.get(DcMotor.class, "fr");
         bl = hardwareMap.get(DcMotor.class, "bl");
+
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
-        try{
-	    /*
-	    1. Move forward to the second bar
-	   2. Move sideways through
-	   the bar to the backdrop for 5 points
-	   */
 
-            moveForward(0.5);
-            TimeUnit.MILLISECONDS.sleep(785);
-            Idle(0);
-            TimeUnit.MILLISECONDS.sleep(700);
-            turnRight(0.5);
-            telemetry.addLine("Turned left");
-            telemetry.update();
-            TimeUnit.MILLISECONDS.sleep(710);
-        } catch(InterruptedException e){
-            //TODO: handle exception
-        }
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -134,16 +121,42 @@ public class Autonomous_BLUE_FRONT extends LinearOpMode
         });
 
         telemetry.setMsTransmissionInterval(50);
+        dontre = false;
+        telemetry.addLine("Autonomous_BLUE_FRONT Initialized...");
+        telemetry.update();
+        telemetry.addLine("Everything Works! :)");
+        telemetry.addLine("Ready to Start Autonomous");
+        telemetry.update();
+        waitForStart();
 
-        /*
-         * The INIT-loop:
-         * This REPLACES waitForStart!
-         */
-        while (!isStarted() && !isStopRequested())
-        {
+        while (opModeIsActive()) {
+            if (dontre == false) {
+                try{
+	    /*
+	    1. Move forward to the second bar
+	   2. Move sideways through
+	   the bar to the backdrop for 5 points
+	   */
+                    moveForward(0.5);
+                    TimeUnit.MILLISECONDS.sleep(785);
+                    Idle(0);
+                    TimeUnit.MILLISECONDS.sleep(700);
+                    telemetry.addLine("Turned left");
+                    telemetry.update();
+                    turnLeft(0.5);
+                    TimeUnit.MILLISECONDS.sleep(710);
+                    Idle(0);
+                    telemetry.addLine("Autonomous Setup Complete! :)");
+                    telemetry.update();
+                } catch(InterruptedException e){
+                    //TODO: handle exception
+                }
+                dontre = true;
+            }
+            telemetry.addLine("Moving to the AprilTag...");
+            telemetry.update();
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
-
-            if(currentDetections.size() != 0)
+            if (currentDetections.size() != 0 && opModeIsActive())
             {
                 boolean tagFound = false;
 
@@ -159,7 +172,7 @@ public class Autonomous_BLUE_FRONT extends LinearOpMode
 
                 if(tagFound)
                 {
-                    double deadzone = 0.1;
+                    double deadzone = 0.5;
 
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
@@ -170,17 +183,17 @@ public class Autonomous_BLUE_FRONT extends LinearOpMode
                         Idle(0);
                     }
                     if(tagOfInterest.pose.x < -deadzone) {
-                        strafeLeft(0.5);
+                        strafeLeft(1);
                     }
                     else if(tagOfInterest.pose.x > deadzone) {
                         // do something else
-                        strafeRight(0.5);
+                        strafeRight(1);
                     } else {
                         Idle(0);
                     }
-                    if (rot.firstAngle > 20) {
+                    if (rot.firstAngle < -15) {
                         turnLeft(0.5);
-                    } else if (rot.firstAngle < -20) {
+                    } else if (rot.firstAngle > 15) {
                         turnRight(0.5);
                     } else {
                         Idle(0);
@@ -202,6 +215,8 @@ public class Autonomous_BLUE_FRONT extends LinearOpMode
                     }
                 }
 
+                telemetry.update();
+                sleep(20);
             }
             else
             {
@@ -219,49 +234,7 @@ public class Autonomous_BLUE_FRONT extends LinearOpMode
                 }
 
             }
-
-            telemetry.update();
-            sleep(20);
         }
-
-        /*
-         * The START command just came in: now work off the latest snapshot acquired
-         * during the init loop.
-         */
-
-        /* Update the telemetry */
-        if(tagOfInterest != null)
-        {
-            telemetry.addLine("Tag snapshot:\n");
-            tagToTelemetry(tagOfInterest);
-            telemetry.update();
-        }
-        else
-        {
-            telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
-            telemetry.update();
-        }
-
-        /* Actually do something useful */
-        if(tagOfInterest == null)
-        {
-            /*
-             * Insert your autonomous code here, presumably running some default configuration
-             * since the tag was never sighted during INIT
-             */
-        }
-        else
-        {
-            /*
-             * Insert your autonomous code here, probably using the tag pose to decide your configuration.
-             */
-
-            // e.g.
-        }
-
-
-        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
-        while (opModeIsActive()) {sleep(20);}
     }
 
     void tagToTelemetry(AprilTagDetection detection)
