@@ -39,9 +39,9 @@ public class Autonomous_RED_BACK extends LinearOpMode
     double tagsize = 0.166;
 
     int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
-    int LEFT = 1;
-    int MIDDLE = 2;
-    int RIGHT = 3;
+    int LEFT = 4;
+    int MIDDLE = 5;
+    int RIGHT = 6;
     AprilTagDetection tagOfInterest = null;
     boolean dontre;
     private DcMotor fr, fl, bl, br;
@@ -174,12 +174,12 @@ public class Autonomous_RED_BACK extends LinearOpMode
 
                 if(tagFound)
                 {
-                    double deadzone = 0.5;
+                    double deadzone = 0.2;
 
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
                     Orientation rot = Orientation.getOrientation(tagOfInterest.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
-                    if (tagOfInterest.pose.z > 1) {
+                    if (tagOfInterest.pose.z > 0.75) {
                         moveForward(1);
                     } else {
                         Idle(0);
@@ -193,10 +193,10 @@ public class Autonomous_RED_BACK extends LinearOpMode
                     } else {
                         Idle(0);
                     }
-                    if (rot.firstAngle < -15) {
-                        turnLeft(0.5);
-                    } else if (rot.firstAngle > 15) {
-                        turnRight(0.5);
+                    if (rot.firstAngle < -10) {
+                        turnLeft(1);
+                    } else if (rot.firstAngle > 10) {
+                        turnRight(1);
                     } else {
                         Idle(0);
                     }

@@ -64,6 +64,7 @@ public class Payload_TeleOp extends LinearOpMode {
                     bl.setPower((ly - lx - rx) / 2);
                     br.setPower((ly + lx + rx) / 2);
                 }
+
             }
             dcAc1.setPower(-ly2);
             dcAc2.setPower(-ry2);
@@ -139,11 +140,8 @@ public class Payload_TeleOp extends LinearOpMode {
                 serAir.setPosition(0);
             }
             if (gamepad2.back == true) {
-                telemetry.addLine("Servo position update:");
-                telemetry.addLine("SerAc1 Pos: " + serAc1.getPosition());
-                telemetry.addLine("SerAc2 Pos: " + serAc2.getPosition());
-                telemetry.addLine("SerIn5: " + String.valueOf(serIn5.getPosition()));
-                telemetry.update();
+                serAc1.setPosition(0.78);
+                serAc2.setPosition(0.78);
             }
         }
     }
