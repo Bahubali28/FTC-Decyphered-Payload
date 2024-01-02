@@ -44,6 +44,12 @@ public class Autonomous_RED_FRONT extends LinearOpMode
     int RIGHT = 6;
     AprilTagDetection tagOfInterest = null;
     boolean dontre;
+    boolean desYaw;
+    boolean checkYaw;
+    boolean desX;
+    boolean checkYaw2;
+    boolean desZ;
+    boolean checkYaw3;
     private DcMotor fr, fl, bl, br;
 
     public void moveForward(double power) {
@@ -112,7 +118,6 @@ public class Autonomous_RED_FRONT extends LinearOpMode
             {
                 camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
             }
-
             @Override
             public void onError(int errorCode)
             {

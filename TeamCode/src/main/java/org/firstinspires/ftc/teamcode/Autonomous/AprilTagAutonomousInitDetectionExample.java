@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-@Disabled
+
 @Autonomous(name = "Autonomous_Test", group = "Auton_Test", preselectTeleOp = "Payload_TeleOp")
 public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 {
@@ -45,6 +45,12 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     int RIGHT = 3;
     AprilTagDetection tagOfInterest = null;
     boolean dontre;
+    boolean desYaw;
+    boolean desX;
+    boolean checkYaw;
+    boolean desZ;
+    boolean checkYaw2;
+    boolean parkNeeded;
     private DcMotor fr, fl, bl, br;
 
     public void moveForward(double power) {
@@ -83,15 +89,14 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         bl.setPower(power);
         br.setPower(-power);
     }
-    public void Idle(double power) {
-        fl.setPower(power);
-        fr.setPower(power);
-        bl.setPower(power);
-        br.setPower(power);
+    public void Idle() {
+        fl.setPower(0);
+        fr.setPower(0);
+        bl.setPower(0);
+        br.setPower(0);
     }
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() throws InterruptedException {
         telemetry.addLine("Initializing...");
         telemetry.update();
         fl = hardwareMap.get(DcMotor.class, "fl");
@@ -123,6 +128,12 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
         telemetry.setMsTransmissionInterval(50);
         dontre = false;
+        desYaw = false;
+        checkYaw = false;
+        desX = false;
+        checkYaw2 = false;
+        desZ = false;
+        parkNeeded = true;
         telemetry.addLine("Autonomous_RED_BACK Initialized...");
         telemetry.update();
         telemetry.addLine("Everything Works");
@@ -140,7 +151,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 	   */
                     moveForward(0.5);
                     TimeUnit.MILLISECONDS.sleep(785);
-                    Idle(0);
+                    Idle();
                     TimeUnit.MILLISECONDS.sleep(700);
                     telemetry.addLine("Turned right");
                     telemetry.update();
@@ -148,7 +159,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
                     TimeUnit.MILLISECONDS.sleep(710);
                     moveForward(0.5);
                     TimeUnit.SECONDS.sleep(2);
-                    Idle(0);
+                    Idle();
                     telemetry.addLine("Autonomous Setup Complete! :)");
                     telemetry.update();
                 } catch(InterruptedException e){
@@ -175,36 +186,83 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
                 if(tagFound)
                 {
-                    double deadzone = 0.5;
+                    double deadzone = 0.2;
 
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
                     Orientation rot = Orientation.getOrientation(tagOfInterest.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
-                    if (tagOfInterest.pose.z > 1) {
-                        moveForward(1);
-                    } else {
-                        Idle(0);
-                    }
-                    if(tagOfInterest.pose.x < -deadzone) {
-                        strafeLeft(1);
-                    }
-                    else if(tagOfInterest.pose.x > deadzone) {
-                        // do something else
-                        strafeRight(1);
-                    } else {
-                        Idle(0);
-                    }
-                    if (rot.firstAngle < -15) {
-                        turnLeft(0.5);
-                    } else if (rot.firstAngle > 15) {
-                        turnRight(0.5);
-                    } else {
-                        Idle(0);
-                    }
+                    do {
+                        while (!desYaw && opModeIsActive()) {
+                            if (rot.firstAngle < -10) {
+                                turnLeft(0.5);
+                            } else if (rot.firstAngle > 10) {
+                                turnRight(0.5);
+                            } else {
+                                Idle();
+                                desYaw = true;
+                            }
+                        }
+                        while (!desX && opModeIsActive()) {
+                            if(tagOfInterest.pose.x < -deadzone) {
+                                strafeLeft(1);
+                            }
+                            else if(tagOfInterest.pose.x > deadzone) {
+                                // do something else
+                                strafeRight(1);
+                            } else {
+                                Idle();
+                                desX = true;
+                            }
+                        }
+                        while (!checkYaw && opModeIsActive()) {
+                            if (rot.firstAngle < -15) {
+                                turnLeft(1);
+                            } else if (rot.firstAngle > 15) {
+                                turnRight(1);
+                            } else {
+                                Idle();
+                                checkYaw = true;
+                            }
+                        }
+                        while (!desZ && opModeIsActive()) {
+                            if (tagOfInterest.pose.z > 0.5) {
+                                moveForward(1);
+                            } else {
+                                Idle();
+                                desZ = true;
+                            }
+                        }
+                        while (!checkYaw2 && opModeIsActive()) {
+                            if (rot.firstAngle < -15) {
+                                turnLeft(1);
+                            } else if (rot.firstAngle > 15) {
+                                turnRight(1);
+                            } else {
+                                Idle();
+                                checkYaw2 = true;
+                            }
+                        }
+                    } while (desYaw && desX && checkYaw && desZ && checkYaw2 && opModeIsActive()); {
+                        if (parkNeeded) {
+                            strafeRight(0.5);
+                            TimeUnit.MILLISECONDS.sleep(250);
+                            Idle();
+                            telemetry.addLine("Strafed Left");
+                            telemetry.addLine("Ready to park.");
+                            telemetry.update();
+                            moveForward(0.5);
+                            TimeUnit.MILLISECONDS.sleep(250);
+                            Idle();
+                            telemetry.addLine("Parked");
+                            telemetry.update();
+                            parkNeeded = false;
+                        }
+                }
+
                 }
                 else
                 {
-                    Idle(0);
+                    Idle();
                     telemetry.addLine("Don't see tag of interest :(");
 
                     if(tagOfInterest == null)
@@ -223,7 +281,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
             }
             else
             {
-                Idle(0);
+                Idle();
                 telemetry.addLine("Don't see tag of interest :(");
 
                 if(tagOfInterest == null)
