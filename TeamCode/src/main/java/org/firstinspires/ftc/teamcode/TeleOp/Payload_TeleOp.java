@@ -104,8 +104,6 @@ public class Payload_TeleOp extends LinearOpMode {
                 serAc1.setPosition(0.65);
                 serAc2.setPosition(0.65);
                 TimeUnit.MILLISECONDS.sleep(10);
-                serIn4.setPosition(0.50);
-                serIn5.setPosition(0.50);
                 telemetry.addLine("serAc2 " + serAc2.getPosition());
                 telemetry.update();
             }
@@ -145,8 +143,8 @@ public class Payload_TeleOp extends LinearOpMode {
                 telemetry.update();
             }
             if (gamepad2.start == true) {
-                serIn5.setPosition(0);
-                serIn4.setPosition(0);
+                serIn4.setPosition(0.85);
+                serIn5.setPosition(0.85);
                 telemetry.addLine("serIn5 " + serIn5.getPosition());
                 telemetry.update();
             }
@@ -157,16 +155,16 @@ public class Payload_TeleOp extends LinearOpMode {
                 serAir.setPosition(0);
             }
             if (gamepad2.back == true) {
-                serIn4.setPosition(0.85);
-                serIn5.setPosition(0.85);
+                serIn4.setPosition(0);
+                serIn5.setPosition(0);
             }
             if (gamepad2.dpad_left == true) {
                 serIn5.setPosition(0.93);
                 serIn4.setPosition(0.93);
             }
             if (gamepad2.dpad_right == true) {
-                serIn5.setPosition(0.91);
-                serIn4.setPosition(0.91);
+                serIn4.setPosition(0.50);
+                serIn5.setPosition(0.50);
             }
         }
     }
