@@ -2,19 +2,20 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+
 import java.util.concurrent.TimeUnit;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp
 
 public class Payload_TeleOp extends LinearOpMode {
     private DcMotor fr, fl, br, bl, dcAc1, dcAc2;
-    private Servo serAc1, serAc2, serIn5, serAir;
+    private Servo serAc1, serAc2, serIn4, serIn5, serAir;
     private CRServo serIn1, serIn2;
 
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         fl = hardwareMap.get(DcMotor.class, "fl");
         br = hardwareMap.get(DcMotor.class, "br");
         fr = hardwareMap.get(DcMotor.class, "fr");
@@ -26,19 +27,26 @@ public class Payload_TeleOp extends LinearOpMode {
         serAc2 = hardwareMap.get(Servo.class, "serAc2");
         serIn1 = hardwareMap.get(CRServo.class, "serIn1");
         serIn2 = hardwareMap.get(CRServo.class, "serIn2");
+        serIn4 = hardwareMap.get(Servo.class, "serIn4");
         serIn5 = hardwareMap.get(Servo.class, "serIn5");
+        serIn1.setDirection(CRServo.Direction.REVERSE);
+        serIn2.setDirection(CRServo.Direction.REVERSE);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         serAc2.setDirection(Servo.Direction.REVERSE);
         serAir.setDirection(Servo.Direction.REVERSE);
-        serIn5.setDirection(Servo.Direction.FORWARD);
+        serIn5.setDirection(Servo.Direction.REVERSE);
+        serIn4.setDirection(Servo.Direction.FORWARD);
         serAc1.setPosition(0.97);
         serAc2.setPosition(0.97);
+        serIn4.setPosition(0);
+        serIn5.setPosition(0);
         serAir.setPosition(0);
         telemetry.addLine("Motors Assigned and Attached");
         telemetry.addLine("SerAc1 Pos: " + serAc1.getPosition());
         telemetry.addLine("SerAc2 Pos: " + serAc2.getPosition());
-        telemetry.addLine("SerIn5: " + String.valueOf(serIn5.getPosition()));
+        telemetry.addLine("SerIn4 Pos" + String.valueOf(serIn4.getPosition()));
+        telemetry.addLine("SerIn5 Pos: " + String.valueOf(serIn5.getPosition()));
         telemetry.addLine("SerIn5 Updated: " + String.valueOf(serIn5.getPosition()));
         telemetry.addLine("BLAST OFF!!!");
         telemetry.update();
@@ -95,12 +103,18 @@ public class Payload_TeleOp extends LinearOpMode {
             if (gamepad2.y == true) {
                 serAc1.setPosition(0.65);
                 serAc2.setPosition(0.65);
+                TimeUnit.MILLISECONDS.sleep(10);
+                serIn4.setPosition(0.50);
+                serIn5.setPosition(0.50);
                 telemetry.addLine("serAc2 " + serAc2.getPosition());
                 telemetry.update();
             }
             if (gamepad2.a == true) {
                 serAc1.setPosition(0.78);
                 serAc2.setPosition(0.78);
+                TimeUnit.MILLISECONDS.sleep(10);
+                serIn4.setPosition(0);
+                serIn5.setPosition(0);
                 try {
                     telemetry.addLine("First: serAc2 " + serAc2.getPosition());
                     telemetry.update();
@@ -119,17 +133,20 @@ public class Payload_TeleOp extends LinearOpMode {
                 serAc2.setPosition(0.97);
             }
             if (gamepad2.right_bumper == true) {
-                serIn5.setPosition(0);
+                serIn5.setPosition(0.90);
+                serIn4.setPosition(0.90);
                 telemetry.addLine("serIn5 " + serIn5.getPosition());
                 telemetry.update();
             }
             if (gamepad2.left_bumper == true) {
-                serIn5.setPosition(0.34);
+                serIn5.setPosition(0.60);
+                serIn4.setPosition(0.60);
                 telemetry.addLine("serIn5 " + serIn5.getPosition());
                 telemetry.update();
             }
             if (gamepad2.start == true) {
-                serIn5.setPosition(0.13);
+                serIn5.setPosition(0);
+                serIn4.setPosition(0);
                 telemetry.addLine("serIn5 " + serIn5.getPosition());
                 telemetry.update();
             }
@@ -140,8 +157,16 @@ public class Payload_TeleOp extends LinearOpMode {
                 serAir.setPosition(0);
             }
             if (gamepad2.back == true) {
-                serAc1.setPosition(0.78);
-                serAc2.setPosition(0.78);
+                serIn4.setPosition(0.85);
+                serIn5.setPosition(0.85);
+            }
+            if (gamepad2.dpad_left == true) {
+                serIn5.setPosition(0.93);
+                serIn4.setPosition(0.93);
+            }
+            if (gamepad2.dpad_right == true) {
+                serIn5.setPosition(0.91);
+                serIn4.setPosition(0.91);
             }
         }
     }

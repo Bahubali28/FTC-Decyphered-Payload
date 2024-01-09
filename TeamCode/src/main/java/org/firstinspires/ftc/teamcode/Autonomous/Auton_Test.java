@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -14,13 +14,12 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 @Autonomous(name = "Autonomous_Test", group = "Auton_Test", preselectTeleOp = "Payload_TeleOp")
-public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
+public class Auton_Test extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -51,6 +50,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     boolean desZ;
     boolean checkYaw2;
     boolean parkNeeded;
+    int step;
     private DcMotor fr, fl, bl, br;
 
     public void moveForward(double power) {
@@ -134,6 +134,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         checkYaw2 = false;
         desZ = false;
         parkNeeded = true;
+        step = 1;
         telemetry.addLine("Autonomous_RED_BACK Initialized...");
         telemetry.update();
         telemetry.addLine("Everything Works");
@@ -142,31 +143,31 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         waitForStart();
 
         while (opModeIsActive()) {
-            if (dontre == false) {
-                try{
-	    /*
-	    1. Move forward to the second bar
-	   2. Move sideways through
-	   the bar to the backdrop for 5 points
-	   */
-                    moveForward(0.5);
-                    TimeUnit.MILLISECONDS.sleep(785);
-                    Idle();
-                    TimeUnit.MILLISECONDS.sleep(700);
-                    telemetry.addLine("Turned right");
-                    telemetry.update();
-                    turnRight(0.5);
-                    TimeUnit.MILLISECONDS.sleep(710);
-                    moveForward(0.5);
-                    TimeUnit.SECONDS.sleep(2);
-                    Idle();
-                    telemetry.addLine("Autonomous Setup Complete! :)");
-                    telemetry.update();
-                } catch(InterruptedException e){
-                    //TODO: handle exception
-                }
-                dontre = true;
-            }
+//            if (dontre == false) {
+//                try{
+//	    /*
+//	    1. Move forward to the second bar
+//	   2. Move sideways through
+//	   the bar to the backdrop for 5 points
+//	   */
+//                    moveForward(0.5);
+//                    TimeUnit.MILLISECONDS.sleep(775);
+//                    Idle();
+//                    TimeUnit.MILLISECONDS.sleep(700);
+//                    telemetry.addLine("Turned right");
+//                    telemetry.update();
+//                    turnRight(0.5);
+//                    TimeUnit.MILLISECONDS.sleep(850);
+//                    moveForward(0.5);
+//                    TimeUnit.SECONDS.sleep(2);
+//                    Idle();
+//                    telemetry.addLine("Autonomous Setup Complete! :)");
+//                    telemetry.update();
+//                } catch(InterruptedException e){
+//                    TODO: handle exception
+//                }
+//                dontre = true;
+//            }
             telemetry.addLine("Moving to the April Tag...");
             telemetry.update();
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
@@ -192,7 +193,9 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
                     tagToTelemetry(tagOfInterest);
                     Orientation rot = Orientation.getOrientation(tagOfInterest.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
                     do {
-                        while (!desYaw && opModeIsActive()) {
+                        if (step == 1 && !desYaw && opModeIsActive()) {
+                            telemetry.addData("step: ", step);
+                            telemetry.update();
                             if (rot.firstAngle < -10) {
                                 turnLeft(0.5);
                             } else if (rot.firstAngle > 10) {
@@ -200,39 +203,59 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
                             } else {
                                 Idle();
                                 desYaw = true;
+                                telemetry.addData("desYaw: ", desYaw);
+                                telemetry.update();
+                                step++;
                             }
                         }
-                        while (!desX && opModeIsActive()) {
+                        if (step == 2 && !desX && opModeIsActive()) {
+                            telemetry.addData("step: ", step);
+                            telemetry.update();
                             if(tagOfInterest.pose.x < -deadzone) {
-                                strafeLeft(1);
+                                strafeLeft(0.5);
                             }
                             else if(tagOfInterest.pose.x > deadzone) {
                                 // do something else
-                                strafeRight(1);
+                                strafeRight(0.5);
                             } else {
                                 Idle();
                                 desX = true;
+                                telemetry.addData("desX: ", desX);
+                                telemetry.update();
+                                step++;
                             }
                         }
-                        while (!checkYaw && opModeIsActive()) {
+                        if (step == 3 && !checkYaw && opModeIsActive()) {
+                            telemetry.addData("step: ", step);
+                            telemetry.update();
                             if (rot.firstAngle < -15) {
-                                turnLeft(1);
+                                turnLeft(0.5);
                             } else if (rot.firstAngle > 15) {
-                                turnRight(1);
+                                turnRight(0.5);
                             } else {
                                 Idle();
                                 checkYaw = true;
+                                telemetry.addData("checkYaw: ", checkYaw);
+                                telemetry.update();
+                                step++;
                             }
                         }
-                        while (!desZ && opModeIsActive()) {
+                        if (step == 4 && !desZ && opModeIsActive()) {
+                            telemetry.addData("step: ", step);
+                            telemetry.update();
                             if (tagOfInterest.pose.z > 0.5) {
-                                moveForward(1);
+                                moveForward(0.5);
                             } else {
                                 Idle();
                                 desZ = true;
+                                telemetry.addData("desZ: ", desZ);
+                                telemetry.update();
+                                step++;
                             }
                         }
-                        while (!checkYaw2 && opModeIsActive()) {
+                        if (step == 5 && !checkYaw2 && opModeIsActive()) {
+                            telemetry.addData("step: ", step);
+                            telemetry.update();
                             if (rot.firstAngle < -15) {
                                 turnLeft(1);
                             } else if (rot.firstAngle > 15) {
@@ -240,10 +263,13 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
                             } else {
                                 Idle();
                                 checkYaw2 = true;
+                                telemetry.addData("checkYaw2: ", checkYaw2);
+                                telemetry.update();
+                                step++;
                             }
                         }
-                    } while (desYaw && desX && checkYaw && desZ && checkYaw2 && opModeIsActive()); {
-                        if (parkNeeded) {
+                    } while (step == 6 && desX && checkYaw && desZ && checkYaw2 && opModeIsActive()); {
+                        if (parkNeeded && step == 6) {
                             strafeRight(0.5);
                             TimeUnit.MILLISECONDS.sleep(250);
                             Idle();
@@ -256,6 +282,8 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
                             telemetry.addLine("Parked");
                             telemetry.update();
                             parkNeeded = false;
+                        } else if (!parkNeeded) {
+                            step++;
                         }
                 }
 
