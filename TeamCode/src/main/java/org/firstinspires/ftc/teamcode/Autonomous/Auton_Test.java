@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -52,6 +54,8 @@ public class Auton_Test extends LinearOpMode
     boolean parkNeeded;
     int step;
     private DcMotor fr, fl, bl, br;
+    private Servo serIn4, serIn5;
+    private CRServo serIn1, serIn2;
 
     public void moveForward(double power) {
         fl.setPower(-power);
@@ -103,9 +107,19 @@ public class Auton_Test extends LinearOpMode
         br = hardwareMap.get(DcMotor.class, "br");
         fr = hardwareMap.get(DcMotor.class, "fr");
         bl = hardwareMap.get(DcMotor.class, "bl");
+        serIn4 = hardwareMap.get(Servo.class, "serIn4");
+        serIn5 = hardwareMap.get(Servo.class, "serIn5");
+        serIn1 = hardwareMap.get(CRServo.class, "serIn1");
+        serIn2 = hardwareMap.get(CRServo.class, "serIn2");
 
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        serIn1.setDirection(CRServo.Direction.REVERSE);
+        serIn2.setDirection(CRServo.Direction.REVERSE);
+        serIn5.setDirection(Servo.Direction.REVERSE);
+        serIn4.setDirection(Servo.Direction.FORWARD);
+        serIn4.setPosition(0);
+        serIn5.setPosition(0);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -143,31 +157,36 @@ public class Auton_Test extends LinearOpMode
         waitForStart();
 
         while (opModeIsActive()) {
-//            if (dontre == false) {
-//                try{
-//	    /*
-//	    1. Move forward to the second bar
-//	   2. Move sideways through
-//	   the bar to the backdrop for 5 points
-//	   */
-//                    moveForward(0.5);
-//                    TimeUnit.MILLISECONDS.sleep(775);
-//                    Idle();
-//                    TimeUnit.MILLISECONDS.sleep(700);
-//                    telemetry.addLine("Turned right");
-//                    telemetry.update();
-//                    turnRight(0.5);
-//                    TimeUnit.MILLISECONDS.sleep(850);
-//                    moveForward(0.5);
-//                    TimeUnit.SECONDS.sleep(2);
-//                    Idle();
-//                    telemetry.addLine("Autonomous Setup Complete! :)");
-//                    telemetry.update();
-//                } catch(InterruptedException e){
+            if (step == 1) {
+                try{
+	    /*
+	    1. Move forward to the second bar
+	   2. Move sideways through
+	   the bar to the backdrop for 5 points
+	   */
+                    moveForward(0.5);
+                    TimeUnit.MILLISECONDS.sleep(775);
+                    Idle();
+                    TimeUnit.MILLISECONDS.sleep(700);
+                    telemetry.addLine("Turned right");
+                    telemetry.update();
+                    turnRight(0.5);
+                    TimeUnit.MILLISECONDS.sleep(830);
+                    moveForward(0.5);
+                    TimeUnit.SECONDS.sleep(2);
+                    Idle();
+                    telemetry.addLine("Autonomous Setup Complete! :)");
+                    telemetry.update();
+                } catch(InterruptedException e){
 //                    TODO: handle exception
-//                }
-//                dontre = true;
-//            }
+                }
+                step++;
+            }
+            if (step == 2) {
+                serIn4.setPosition(0.55);
+                serIn5.setPosition(0.55);
+                step++;
+            }
             telemetry.addLine("Moving to the April Tag...");
             telemetry.update();
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
@@ -193,7 +212,7 @@ public class Auton_Test extends LinearOpMode
                     tagToTelemetry(tagOfInterest);
                     Orientation rot = Orientation.getOrientation(tagOfInterest.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
                     do {
-                        if (step == 1 && !desYaw && opModeIsActive()) {
+                        if (step == 3 &&!desYaw && opModeIsActive()) {
                             telemetry.addData("step: ", step);
                             telemetry.update();
                             if (rot.firstAngle < -10) {
@@ -208,7 +227,7 @@ public class Auton_Test extends LinearOpMode
                                 step++;
                             }
                         }
-                        if (step == 2 && !desX && opModeIsActive()) {
+                        if (step == 4 && !desX && opModeIsActive()) {
                             telemetry.addData("step: ", step);
                             telemetry.update();
                             if(tagOfInterest.pose.x < -deadzone) {
@@ -225,7 +244,7 @@ public class Auton_Test extends LinearOpMode
                                 step++;
                             }
                         }
-                        if (step == 3 && !checkYaw && opModeIsActive()) {
+                        if (step == 5 && !checkYaw && opModeIsActive()) {
                             telemetry.addData("step: ", step);
                             telemetry.update();
                             if (rot.firstAngle < -15) {
@@ -240,7 +259,7 @@ public class Auton_Test extends LinearOpMode
                                 step++;
                             }
                         }
-                        if (step == 4 && !desZ && opModeIsActive()) {
+                        if (step == 6 && !desZ && opModeIsActive()) {
                             telemetry.addData("step: ", step);
                             telemetry.update();
                             if (tagOfInterest.pose.z > 0.5) {
@@ -253,7 +272,7 @@ public class Auton_Test extends LinearOpMode
                                 step++;
                             }
                         }
-                        if (step == 5 && !checkYaw2 && opModeIsActive()) {
+                        if (step == 7 && !checkYaw2 && opModeIsActive()) {
                             telemetry.addData("step: ", step);
                             telemetry.update();
                             if (rot.firstAngle < -15) {
@@ -268,8 +287,18 @@ public class Auton_Test extends LinearOpMode
                                 step++;
                             }
                         }
-                    } while (step == 6 && desX && checkYaw && desZ && checkYaw2 && opModeIsActive()); {
-                        if (parkNeeded && step == 6) {
+                        if (step == 8) {
+                            serIn1.setPower(1);
+                            serIn2.setPower(-1);
+                            TimeUnit.MILLISECONDS.sleep(500);
+                            serIn1.setPower(0);
+                            serIn2.setPower(0);
+                            serIn4.setPosition(0);
+                            serIn5.setPosition(0);
+                            step++;
+                        }
+                    } while (step == 9 && desX && checkYaw && desZ && checkYaw2 && opModeIsActive()); {
+                        if (parkNeeded && step == 9) {
                             strafeRight(0.5);
                             TimeUnit.MILLISECONDS.sleep(250);
                             Idle();
