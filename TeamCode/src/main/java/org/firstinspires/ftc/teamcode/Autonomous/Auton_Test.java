@@ -129,7 +129,7 @@ public class Auton_Test extends LinearOpMode
             @Override
             public void onOpened()
             {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(1920,1080, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -164,13 +164,13 @@ public class Auton_Test extends LinearOpMode
 	   the bar to the backdrop for 5 points
 	   */
                     moveForward(0.5);
-                    TimeUnit.MILLISECONDS.sleep(700);
+                    TimeUnit.MILLISECONDS.sleep(790);
                     Idle();
                     TimeUnit.MILLISECONDS.sleep(700);
                     telemetry.addLine("Turned right");
                     telemetry.update();
                     turnRight(0.5);
-                    TimeUnit.MILLISECONDS.sleep(950);
+                    TimeUnit.MILLISECONDS.sleep(980);
                     moveForward(0.5);
                     TimeUnit.SECONDS.sleep(2);
                     Idle();
@@ -200,7 +200,7 @@ public class Auton_Test extends LinearOpMode
 
                 if(tagFound)
                 {
-                    double deadzone = 0.1;
+                    double deadzone = 0.2;
 
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
@@ -209,9 +209,9 @@ public class Auton_Test extends LinearOpMode
                         if (step == 2 &&!desYaw && opModeIsActive()) {
                             telemetry.addData("step: ", step);
                             telemetry.update();
-                            if (rot.firstAngle < -5) {
+                            if (rot.firstAngle < -3) {
                                 turnLeft(0.2);
-                            } else if (rot.firstAngle > 5) {
+                            } else if (rot.firstAngle > 3) {
                                 turnRight(0.2);
                             } else {
                                 Idle();
@@ -288,12 +288,12 @@ public class Auton_Test extends LinearOpMode
                             telemetry.update();
                             serIn4.setPosition(0.75);
                             serIn5.setPosition(0.75);
-                            TimeUnit.MILLISECONDS.sleep(500);
+                            TimeUnit.SECONDS.sleep(2);
                             placedPixel = true;
                         }
                         if (placedPixel) {
-                            serIn1.setPower(0.5);
-                            serIn2.setPower(-0.5);
+                            serIn1.setPower(0.25);
+                            serIn2.setPower(-0.25);
                             TimeUnit.MILLISECONDS.sleep(500);
                             serIn1.setPower(0);
                             serIn2.setPower(0);
