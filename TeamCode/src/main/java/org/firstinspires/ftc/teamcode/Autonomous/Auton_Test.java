@@ -170,7 +170,7 @@ public class Auton_Test extends LinearOpMode
                     telemetry.addLine("Turned right");
                     telemetry.update();
                     turnRight(0.5);
-                    TimeUnit.MILLISECONDS.sleep(930);
+                    TimeUnit.MILLISECONDS.sleep(950);
                     moveForward(0.5);
                     TimeUnit.SECONDS.sleep(2);
                     Idle();
