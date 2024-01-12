@@ -200,7 +200,7 @@ public class Auton_Test extends LinearOpMode
 
                 if(tagFound)
                 {
-                    double deadzone = 0.2;
+                    double deadzone = 0.1;
 
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
