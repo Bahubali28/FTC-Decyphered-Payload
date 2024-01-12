@@ -41,8 +41,6 @@ public class Auton_Test extends LinearOpMode
     double tagsize = 0.166;
 
     int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
-    int LEFT = 4;
-    int MIDDLE = 5;
     int RIGHT = 6;
     AprilTagDetection tagOfInterest = null;
     boolean dontre;
@@ -52,6 +50,7 @@ public class Auton_Test extends LinearOpMode
     boolean desZ;
     boolean checkYaw2;
     boolean parkNeeded;
+    boolean placedPixel = false;
     int step;
     private DcMotor fr, fl, bl, br;
     private Servo serIn4, serIn5;
@@ -64,10 +63,10 @@ public class Auton_Test extends LinearOpMode
         br.setPower(-power);
     }
     public void moveBackward(double power) {
-        fl.setPower(-power);
-        fr.setPower(-power);
-        bl.setPower(-power);
-        br.setPower(-power);
+        fl.setPower(power);
+        fr.setPower(power);
+        bl.setPower(power);
+        br.setPower(power);
     }
     public void turnLeft(double power) {
         fl.setPower(power);
@@ -165,13 +164,13 @@ public class Auton_Test extends LinearOpMode
 	   the bar to the backdrop for 5 points
 	   */
                     moveForward(0.5);
-                    TimeUnit.MILLISECONDS.sleep(775);
+                    TimeUnit.MILLISECONDS.sleep(700);
                     Idle();
                     TimeUnit.MILLISECONDS.sleep(700);
                     telemetry.addLine("Turned right");
                     telemetry.update();
                     turnRight(0.5);
-                    TimeUnit.MILLISECONDS.sleep(830);
+                    TimeUnit.MILLISECONDS.sleep(930);
                     moveForward(0.5);
                     TimeUnit.SECONDS.sleep(2);
                     Idle();
@@ -180,11 +179,6 @@ public class Auton_Test extends LinearOpMode
                 } catch(InterruptedException e){
 //                    TODO: handle exception
                 }
-                step++;
-            }
-            if (step == 2) {
-                serIn4.setPosition(0.55);
-                serIn5.setPosition(0.55);
                 step++;
             }
             telemetry.addLine("Moving to the April Tag...");
@@ -196,7 +190,7 @@ public class Auton_Test extends LinearOpMode
 
                 for(AprilTagDetection tag : currentDetections)
                 {
-                    if(tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT)
+                    if(tag.id == RIGHT)
                     {
                         tagOfInterest = tag;
                         tagFound = true;
@@ -206,19 +200,19 @@ public class Auton_Test extends LinearOpMode
 
                 if(tagFound)
                 {
-                    double deadzone = 0.2;
+                    double deadzone = 0.1;
 
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
                     Orientation rot = Orientation.getOrientation(tagOfInterest.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
                     do {
-                        if (step == 3 &&!desYaw && opModeIsActive()) {
+                        if (step == 2 &&!desYaw && opModeIsActive()) {
                             telemetry.addData("step: ", step);
                             telemetry.update();
-                            if (rot.firstAngle < -10) {
-                                turnLeft(0.5);
-                            } else if (rot.firstAngle > 10) {
-                                turnRight(0.5);
+                            if (rot.firstAngle < -5) {
+                                turnLeft(0.2);
+                            } else if (rot.firstAngle > 5) {
+                                turnRight(0.2);
                             } else {
                                 Idle();
                                 desYaw = true;
@@ -227,15 +221,15 @@ public class Auton_Test extends LinearOpMode
                                 step++;
                             }
                         }
-                        if (step == 4 && !desX && opModeIsActive()) {
+                        if (step == 3 && !desX && opModeIsActive()) {
                             telemetry.addData("step: ", step);
                             telemetry.update();
                             if(tagOfInterest.pose.x < -deadzone) {
-                                strafeLeft(0.5);
+                                strafeLeft(0.4);
                             }
                             else if(tagOfInterest.pose.x > deadzone) {
                                 // do something else
-                                strafeRight(0.5);
+                                strafeRight(0.4);
                             } else {
                                 Idle();
                                 desX = true;
@@ -244,13 +238,13 @@ public class Auton_Test extends LinearOpMode
                                 step++;
                             }
                         }
-                        if (step == 5 && !checkYaw && opModeIsActive()) {
+                        if (step == 4 && !checkYaw && opModeIsActive()) {
                             telemetry.addData("step: ", step);
                             telemetry.update();
-                            if (rot.firstAngle < -15) {
-                                turnLeft(0.5);
-                            } else if (rot.firstAngle > 15) {
-                                turnRight(0.5);
+                            if (rot.firstAngle < -5) {
+                                turnLeft(0.25);
+                            } else if (rot.firstAngle > 5) {
+                                turnRight(0.25);
                             } else {
                                 Idle();
                                 checkYaw = true;
@@ -259,11 +253,12 @@ public class Auton_Test extends LinearOpMode
                                 step++;
                             }
                         }
-                        if (step == 6 && !desZ && opModeIsActive()) {
+                        if (step == 5 && !desZ && opModeIsActive()) {
                             telemetry.addData("step: ", step);
                             telemetry.update();
-                            if (tagOfInterest.pose.z > 0.5) {
-                                moveForward(0.5);
+                            if (tagOfInterest.pose.z > 0.60) {
+                                moveForward(0.20 );
+
                             } else {
                                 Idle();
                                 desZ = true;
@@ -272,13 +267,13 @@ public class Auton_Test extends LinearOpMode
                                 step++;
                             }
                         }
-                        if (step == 7 && !checkYaw2 && opModeIsActive()) {
+                        if (step == 6 && !checkYaw2 && opModeIsActive()) {
                             telemetry.addData("step: ", step);
                             telemetry.update();
-                            if (rot.firstAngle < -15) {
-                                turnLeft(1);
-                            } else if (rot.firstAngle > 15) {
-                                turnRight(1);
+                            if (rot.firstAngle < -2) {
+                                turnLeft(0.1);
+                            } else if (rot.firstAngle > 2) {
+                                turnRight(0.1);
                             } else {
                                 Idle();
                                 checkYaw2 = true;
@@ -287,18 +282,54 @@ public class Auton_Test extends LinearOpMode
                                 step++;
                             }
                         }
-                        if (step == 8) {
-                            serIn1.setPower(1);
-                            serIn2.setPower(-1);
+                        if (desX && desZ) {
+                            telemetry.addLine("Reached the april tag.");
+                            telemetry.addLine("Placing the pixel");
+                            telemetry.update();
+                            serIn4.setPosition(0.75);
+                            serIn5.setPosition(0.75);
+                            TimeUnit.MILLISECONDS.sleep(500);
+                            placedPixel = true;
+                        }
+                        if (placedPixel) {
+                            serIn1.setPower(0.5);
+                            serIn2.setPower(-0.5);
                             TimeUnit.MILLISECONDS.sleep(500);
                             serIn1.setPower(0);
                             serIn2.setPower(0);
+                            TimeUnit.SECONDS.sleep(1);
                             serIn4.setPosition(0);
                             serIn5.setPosition(0);
                             step++;
+                            moveBackward(0.3);
+                            TimeUnit.MILLISECONDS.sleep(300);
+                            Idle();
+                            TimeUnit.MILLISECONDS.sleep(300);
+                            turnRight(0.5);
+                            TimeUnit.MILLISECONDS.sleep(825);
+                            Idle();
+                            moveForward(0.5);
+                            /*Later, this distance needs to be altered
+                            because the distance between the april tags
+                            makes the distance to park longer or shorter.
+                             */
+                            TimeUnit.MILLISECONDS.sleep(650);
+                            Idle();
+                            turnLeft(0.5);
+                            TimeUnit.MILLISECONDS.sleep(700);
+                            Idle();
+                            moveForward(0.5);
+                            TimeUnit.MILLISECONDS.sleep(500);
+                            Idle();
+                            telemetry.addLine("-------------------------------");
+                            telemetry.addLine("Autonomous complete.");
+                            telemetry.addLine("-------------------------------");
+                            telemetry.update();
                         }
-                    } while (step == 9 && desX && checkYaw && desZ && checkYaw2 && opModeIsActive()); {
-                        if (parkNeeded && step == 9) {
+
+                    } while (step == 9 && desX && checkYaw && desZ && checkYaw2 && opModeIsActive() && parkNeeded);
+                    /*
+                        if (step == 66) {
                             strafeRight(0.5);
                             TimeUnit.MILLISECONDS.sleep(250);
                             Idle();
@@ -314,7 +345,7 @@ public class Auton_Test extends LinearOpMode
                         } else if (!parkNeeded) {
                             step++;
                         }
-                }
+                        */
 
                 }
                 else
