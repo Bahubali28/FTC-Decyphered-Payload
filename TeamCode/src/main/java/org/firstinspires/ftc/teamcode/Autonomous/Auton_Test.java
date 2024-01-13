@@ -41,7 +41,7 @@ public class Auton_Test extends LinearOpMode
     double tagsize = 0.166;
 
     int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
-    int RIGHT = 6;
+    int CENTER = 5;
     AprilTagDetection tagOfInterest = null;
     boolean dontre;
     boolean desYaw;
@@ -49,6 +49,7 @@ public class Auton_Test extends LinearOpMode
     boolean checkYaw;
     boolean desZ;
     boolean checkYaw2;
+
     boolean parkNeeded;
     boolean placedPixel = false;
     int step;
@@ -129,7 +130,7 @@ public class Auton_Test extends LinearOpMode
             @Override
             public void onOpened()
             {
-                camera.startStreaming(1920,1080, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -172,7 +173,7 @@ public class Auton_Test extends LinearOpMode
                     turnRight(0.5);
                     TimeUnit.MILLISECONDS.sleep(980);
                     moveForward(0.5);
-                    TimeUnit.SECONDS.sleep(2);
+                    TimeUnit.MILLISECONDS.sleep(2500);
                     Idle();
                     telemetry.addLine("Autonomous Setup Complete! :)");
                     telemetry.update();
@@ -190,7 +191,7 @@ public class Auton_Test extends LinearOpMode
 
                 for(AprilTagDetection tag : currentDetections)
                 {
-                    if(tag.id == RIGHT)
+                    if(tag.id == CENTER)
                     {
                         tagOfInterest = tag;
                         tagFound = true;
@@ -209,9 +210,9 @@ public class Auton_Test extends LinearOpMode
                         if (step == 2 &&!desYaw && opModeIsActive()) {
                             telemetry.addData("step: ", step);
                             telemetry.update();
-                            if (rot.firstAngle < -3) {
+                            if (rot.firstAngle < -5) {
                                 turnLeft(0.2);
-                            } else if (rot.firstAngle > 3) {
+                            } else if (rot.firstAngle > 5) {
                                 turnRight(0.2);
                             } else {
                                 Idle();
@@ -288,12 +289,12 @@ public class Auton_Test extends LinearOpMode
                             telemetry.update();
                             serIn4.setPosition(0.75);
                             serIn5.setPosition(0.75);
-                            TimeUnit.SECONDS.sleep(2);
+                            TimeUnit.SECONDS.sleep(1);
                             placedPixel = true;
                         }
                         if (placedPixel) {
-                            serIn1.setPower(0.25);
-                            serIn2.setPower(-0.25);
+                            serIn1.setPower(0.15);
+                            serIn2.setPower(-0.15);
                             TimeUnit.MILLISECONDS.sleep(500);
                             serIn1.setPower(0);
                             serIn2.setPower(0);
@@ -306,20 +307,22 @@ public class Auton_Test extends LinearOpMode
                             Idle();
                             TimeUnit.MILLISECONDS.sleep(300);
                             turnRight(0.5);
-                            TimeUnit.MILLISECONDS.sleep(825);
+                            TimeUnit.MILLISECONDS.sleep(845);
                             Idle();
                             moveForward(0.5);
                             /*Later, this distance needs to be altered
                             because the distance between the april tags
                             makes the distance to park longer or shorter.
                              */
-                            TimeUnit.MILLISECONDS.sleep(650);
+                            TimeUnit.MILLISECONDS.sleep(820);
                             Idle();
                             turnLeft(0.5);
                             TimeUnit.MILLISECONDS.sleep(700);
                             Idle();
+                            /*
                             moveForward(0.5);
                             TimeUnit.MILLISECONDS.sleep(500);
+                            */
                             Idle();
                             telemetry.addLine("-------------------------------");
                             telemetry.addLine("Autonomous complete.");
