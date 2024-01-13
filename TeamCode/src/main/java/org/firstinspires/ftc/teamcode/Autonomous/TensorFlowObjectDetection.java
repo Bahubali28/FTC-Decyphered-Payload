@@ -14,6 +14,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /*
  * This OpMode illustrates the basics of TensorFlow Object Detection,
@@ -96,7 +97,7 @@ public class TensorFlowObjectDetection extends LinearOpMode {
     }
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException{
         fl = hardwareMap.get(DcMotor.class, "fl");
         fr = hardwareMap.get(DcMotor.class, "fr");
         bl = hardwareMap.get(DcMotor.class, "bl");
@@ -125,7 +126,9 @@ public class TensorFlowObjectDetection extends LinearOpMode {
                 //TODO: Insert conditions
                 if (Seen) {
                     if (CENTER) {
-
+//                        moveForward(0.5);
+//                        TimeUnit.MILLISECONDS.sleep(200);
+//                        Idle();
                     } else if (RIGHT) {
                         
                     } else if (LEFT) {
