@@ -14,6 +14,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /*
  * This OpMode illustrates the basics of TensorFlow Object Detection,
@@ -29,13 +30,13 @@ public class TensorFlowObjectDetection extends LinearOpMode {
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
-    private static final String TFOD_MODEL_ASSET = "CenterStage.tflite";
+    private static final String TFOD_MODEL_ASSET = "Red_Team_Prop.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
-    //private static final String TFOD_MODEL_FILE = "src/main/assets/CenterStage.tflite";
+    //private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/Red_Team_Prop.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
-            "Pixel",
+            "TeamProp",
     };
     boolean LEFT;
     boolean RIGHT;
@@ -96,7 +97,7 @@ public class TensorFlowObjectDetection extends LinearOpMode {
     }
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException{
         fl = hardwareMap.get(DcMotor.class, "fl");
         fr = hardwareMap.get(DcMotor.class, "fr");
         bl = hardwareMap.get(DcMotor.class, "bl");
@@ -125,7 +126,9 @@ public class TensorFlowObjectDetection extends LinearOpMode {
                 //TODO: Insert conditions
                 if (Seen) {
                     if (CENTER) {
-
+//                        moveForward(0.5);
+//                        TimeUnit.MILLISECONDS.sleep(200);
+//                        Idle();
                     } else if (RIGHT) {
                         
                     } else if (LEFT) {
@@ -157,8 +160,8 @@ public class TensorFlowObjectDetection extends LinearOpMode {
                 // choose one of the following:
                 //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
                 //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-                .setModelAssetName(TFOD_MODEL_ASSET)
                 //.setModelFileName(TFOD_MODEL_FILE)
+                .setModelAssetName(TFOD_MODEL_ASSET)
 
                 // The following default settings are available to un-comment and edit as needed to
                 // set parameters for custom models.
