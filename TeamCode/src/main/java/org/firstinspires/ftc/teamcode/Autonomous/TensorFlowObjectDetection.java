@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorBNO055IMU;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -30,13 +31,14 @@ public class TensorFlowObjectDetection extends LinearOpMode {
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
-    private static final String TFOD_MODEL_ASSET = "Red_Team_Prop.tflite";
+    private static final String TFOD_MODEL_ASSET = "RedTeamProp.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
-    //private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/Red_Team_Prop.tflite";
+//    private static final String TFO
+//    TFOD_MODEL_FILE = "sdcard/FIRST/tflitemodels/Red_Team_Prop.tflite";
     // Define the labels recognized in the model for TFOD (must be in training order!)
     private static final String[] LABELS = {
-            "TeamProp",
+            "Red Team Prop",
     };
     boolean LEFT;
     boolean RIGHT;
@@ -60,10 +62,10 @@ public class TensorFlowObjectDetection extends LinearOpMode {
         br.setPower(-power);
     }
     public void moveBackward(double power) {
-        fl.setPower(-power);
-        fr.setPower(-power);
-        bl.setPower(-power);
-        br.setPower(-power);
+        fl.setPower(power);
+        fr.setPower(power);
+        bl.setPower(power);
+        br.setPower(power);
     }
     public void turnLeft(double power) {
         fl.setPower(power);
@@ -110,6 +112,10 @@ public class TensorFlowObjectDetection extends LinearOpMode {
         CENTER = false;
         RIGHT = false;
         LEFT = false;
+        boolean placed = false;
+        int step = 1;
+        boolean exe = false;
+        boolean exe2 = false;
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
@@ -120,22 +126,79 @@ public class TensorFlowObjectDetection extends LinearOpMode {
             while (opModeIsActive()) {
 
                 telemetryTfod();
-
+                if (step == 1) {
+                    moveForward(0.5);
+                    TimeUnit.MILLISECONDS.sleep(95);
+                    Idle();
+                    TimeUnit.MILLISECONDS.sleep(100);
+                    step++;
+                }
+                if (step == 2 && !LEFT && !RIGHT) {
+                    moveForward(0.5);
+                    TimeUnit.MILLISECONDS.sleep(100);
+                    Idle();
+                    step++;
+                }
+//                if (!exe2 && !LEFT && !CENTER){
+//                    strafeRight(0.5);
+//                    TimeUnit.MILLISECONDS.sleep(100);
+//                    Idle();
+//                    exe2 = true;
+//                }
                 // Push telemetry to the Driver Station.
                 telemetry.update();
                 //TODO: Insert conditions
-                if (Seen) {
+                if (Seen && !placed) {
                     if (CENTER) {
-//                        moveForward(0.5);
-//                        TimeUnit.MILLISECONDS.sleep(200);
-//                        Idle();
+                        telemetry.addLine("Center " + CENTER);
+                        telemetry.update();
+                        moveForward(0.5);
+                        TimeUnit.MILLISECONDS.sleep(1100);
+                        Idle();
+                        step++;
+                        placed = true;
                     } else if (RIGHT) {
-                        
+                        telemetry.addLine("Right " + RIGHT);
+                        telemetry.update();
+                        TimeUnit.MILLISECONDS.sleep(550);
+                        turnRight(0.5);
+                        TimeUnit.MILLISECONDS.sleep(250);
+                        Idle();
+                        moveForward(0.5);
+                        TimeUnit.MILLISECONDS.sleep(850);
+                        step++;
+                        placed = true;
                     } else if (LEFT) {
-
+                        telemetry.addLine("Left " + LEFT);
+                        telemetry.update();
+                        moveForward(0.5);
+                        TimeUnit.MILLISECONDS.sleep(250);
+                        Idle();
+                        TimeUnit.MILLISECONDS.sleep(550);
+                        turnLeft(0.5);
+                        TimeUnit.MILLISECONDS.sleep(450);
+                        Idle();
+                        moveForward(0.5);
+                        TimeUnit.MILLISECONDS.sleep(240);
+                        step++;
+                        placed = true;
                     }
                 } else {
                     Idle();
+                }
+                if (placed && !exe){
+                    if (CENTER && !exe) {
+                        moveBackward(0.5);
+                        TimeUnit.MILLISECONDS.sleep(300);
+                        Idle();
+                        exe = true;
+                    }
+                    if (RIGHT && !exe) {
+                        moveBackward(0.5);
+                        TimeUnit.MILLISECONDS.sleep(500);
+                        step++;
+                        exe = true;
+                    }
                 }
                 //Share the CPU.
                 sleep(20);
@@ -160,7 +223,7 @@ public class TensorFlowObjectDetection extends LinearOpMode {
                 // choose one of the following:
                 //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
                 //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-                //.setModelFileName(TFOD_MODEL_FILE)
+//                .setModelFileName(TFOD_MODEL_FILE)
                 .setModelAssetName(TFOD_MODEL_ASSET)
 
                 // The following default settings are available to un-comment and edit as needed to
@@ -184,7 +247,7 @@ public class TensorFlowObjectDetection extends LinearOpMode {
         }
 
         // Choose a camera resolution. Not all cameras support all resolutions.
-        builder.setCameraResolution(new Size(1280, 720));
+        builder.setCameraResolution(new Size(800, 448));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         builder.enableLiveView(true);
@@ -223,18 +286,18 @@ public class TensorFlowObjectDetection extends LinearOpMode {
         for (Recognition recognition : currentRecognitions) {
             double x = (recognition.getLeft() + recognition.getRight()) / 2;
             double y = (recognition.getTop() + recognition.getBottom()) / 2;
-
+            Seen = true;
             telemetry.addData("", " ");
             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
-            if (x <= 426) {
+            if (x <= 300) {
                 telemetry.addData("Left Spike Mark", x);
                 LEFT = true;
-            } else if (x >= 853) {
+            } else if (x >= 485) {
                 telemetry.addData("Right Spike Mark", x);
                 RIGHT = true;
-            } else if (x > 426 && x < 853) {
+            } else if (x > 300 && x < 485) {
                 telemetry.addData("Center Spike Mark", x);
                 CENTER = true;
             } else
