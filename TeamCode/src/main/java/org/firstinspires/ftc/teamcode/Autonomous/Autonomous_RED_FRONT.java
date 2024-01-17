@@ -324,7 +324,7 @@ public class Autonomous_RED_FRONT extends LinearOpMode {
 
                     for(AprilTagDetection tag : currentDetections)
                     {
-                        if(tag.id == 5)
+                        if(tag.id == 6)
                         {
                             tagOfInterest = tag;
                             tagFound = true;
