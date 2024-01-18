@@ -196,6 +196,26 @@ public class TensorFlowObjectDetection extends LinearOpMode {
                     if (RIGHT && !exe) {
                         moveBackward(0.5);
                         TimeUnit.MILLISECONDS.sleep(500);
+                        Idle();
+                        turnRight(0.5);
+                        TimeUnit.MILLISECONDS.sleep(730);
+                        Idle();
+                        strafeRight(0.5);
+                        TimeUnit.MILLISECONDS.sleep(200);
+                        Idle();
+                        step++;
+                        exe = true;
+                    }
+                    if (LEFT && !exe){
+                        moveBackward(0.5);
+                        TimeUnit.MILLISECONDS.sleep(500);
+                        Idle();
+                        turnRight(0.5);
+                        TimeUnit.MILLISECONDS.sleep(1200);
+                        Idle();
+                        strafeLeft(0.5);
+                        TimeUnit.MILLISECONDS.sleep(200);
+                        Idle();
                         step++;
                         exe = true;
                     }
