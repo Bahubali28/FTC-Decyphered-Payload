@@ -111,8 +111,6 @@ public class Payload_TeleOp extends LinearOpMode {
                 serAc1.setPosition(0.78);
                 serAc2.setPosition(0.78);
                 TimeUnit.MILLISECONDS.sleep(10);
-                serIn4.setPosition(0);
-                serIn5.setPosition(0);
                 try {
                     telemetry.addLine("First: serAc2 " + serAc2.getPosition());
                     telemetry.update();
