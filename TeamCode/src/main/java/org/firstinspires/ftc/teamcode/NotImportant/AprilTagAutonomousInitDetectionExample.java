@@ -19,7 +19,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 @Disabled
-@Autonomous(name = "Uselessk''n", group = "Auton_Test", preselectTeleOp = "Payload_TeleOp")
+@Autonomous(name = "Useless", group = "Auton_Test", preselectTeleOp = "Payload_TeleOp")
 public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 {
     OpenCvCamera camera;

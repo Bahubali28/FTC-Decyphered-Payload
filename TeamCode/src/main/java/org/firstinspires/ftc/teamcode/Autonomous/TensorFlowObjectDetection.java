@@ -128,7 +128,7 @@ public class TensorFlowObjectDetection extends LinearOpMode {
                 telemetryTfod();
                 if (step == 1) {
                     moveForward(0.5);
-                    TimeUnit.MILLISECONDS.sleep(95);
+                    TimeUnit.MILLISECONDS.sleep(120);
                     Idle();
                     TimeUnit.MILLISECONDS.sleep(100);
                     step++;
