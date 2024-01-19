@@ -217,81 +217,86 @@ public abstract class Autonomous_RED_FRONT extends LinearOpMode {
             while (opModeIsActive()) {
 
                 telemetryTfod();
-                if (step2 == 1) {
-                    moveForward(0.5);
-                    TimeUnit.MILLISECONDS.sleep(95);
-                    Idle();
-                    TimeUnit.MILLISECONDS.sleep(100);
-                    step++;
-                }
+                if (!dontre) {
+                    if (step2 == 1) {
+                        moveForward(0.5);
+                        TimeUnit.MILLISECONDS.sleep(95);
+                        Idle();
+                        TimeUnit.MILLISECONDS.sleep(100);
+                        step2++;
+                    }
 //                if (!exe2 && !LEFT && !CENTER){
 //                    strafeRight(0.5);
 //                    TimeUnit.MILLISECONDS.sleep(100);
 //                    Idle();
 //                    exe2 = true;
 //                }
-                // Push telemetry to the Driver Station.
-                telemetry.update();
-                //TODO: Insert conditions
-                if (Seen && !placed) {
-                    if (CENTER) {
-                        telemetry.addLine("Center " + CENTER);
-                        telemetry.update();
-                        moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1100);
+                    // Push telemetry to the Driver Station.
+                    telemetry.update();
+                    //TODO: Insert conditions
+                    if (Seen && !placed) {
+                        if (CENTER) {
+                            telemetry.addLine("Center " + CENTER);
+                            telemetry.update();
+                            moveForward(0.5);
+                            TimeUnit.MILLISECONDS.sleep(1100);
+                            Idle();
+                            step++;
+                            placed = true;
+                        } else if (RIGHT) {
+                            telemetry.addLine("Right " + RIGHT);
+                            telemetry.update();
+                            TimeUnit.MILLISECONDS.sleep(550);
+                            turnRight(0.5);
+                            TimeUnit.MILLISECONDS.sleep(250);
+                            Idle();
+                            moveForward(0.5);
+                            TimeUnit.MILLISECONDS.sleep(850);
+                            step++;
+                            placed = true;
+                        } else if (LEFT) {
+                            telemetry.addLine("Left " + LEFT);
+                            telemetry.update();
+                            moveForward(0.5);
+                            TimeUnit.MILLISECONDS.sleep(250);
+                            Idle();
+                            TimeUnit.MILLISECONDS.sleep(550);
+                            turnLeft(0.5);
+                            TimeUnit.MILLISECONDS.sleep(450);
+                            Idle();
+                            moveForward(0.5);
+                            TimeUnit.MILLISECONDS.sleep(240);
+                            step++;
+                            placed = true;
+                        }
+                    } else {
                         Idle();
-                        step++;
-                        placed = true;
-                    } else if (RIGHT) {
-                        telemetry.addLine("Right " + RIGHT);
-                        telemetry.update();
-                        TimeUnit.MILLISECONDS.sleep(550);
-                        turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(250);
-                        Idle();
-                        moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(850);
-                        step++;
-                        placed = true;
-                    } else if (LEFT) {
-                        telemetry.addLine("Left " + LEFT);
-                        telemetry.update();
-                        moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(250);
-                        Idle();
-                        TimeUnit.MILLISECONDS.sleep(550);
-                        turnLeft(0.5);
-                        TimeUnit.MILLISECONDS.sleep(450);
-                        Idle();
-                        moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(240);
-                        step++;
-                        placed = true;
                     }
-                } else {
-                    Idle();
-                }
-                if (placed && !exe) {
-                    if (CENTER && !exe) {
-                        moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(500);
-                        Idle();
-                        turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(980);
-                        Idle();
-                        exe = true;
-                    }
-                    if (RIGHT && !exe) {
-                        moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(500);
-                        step++;
-                        exe = true;
-                    }
-                    if (LEFT && !exe) {
-                        moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(500);
-                        step++;
-                        exe = true;
+                    if (placed && !exe) {
+                        if (CENTER && !exe) {
+                            moveBackward(0.5);
+                            TimeUnit.MILLISECONDS.sleep(500);
+                            Idle();
+                            turnRight(0.5);
+                            TimeUnit.MILLISECONDS.sleep(980);
+                            Idle();
+                            exe = true;
+                            dontre = true;
+                        }
+                        if (RIGHT && !exe) {
+                            moveBackward(0.5);
+                            TimeUnit.MILLISECONDS.sleep(500);
+                            step++;
+                            exe = true;
+                            dontre = true;
+                        }
+                        if (LEFT && !exe) {
+                            moveBackward(0.5);
+                            TimeUnit.MILLISECONDS.sleep(500);
+                            step++;
+                            exe = true;
+                            dontre = true;
+                        }
                     }
                 }
                 if (step == 1) {
@@ -321,7 +326,7 @@ public abstract class Autonomous_RED_FRONT extends LinearOpMode {
 
                     for(AprilTagDetection tag : currentDetections)
                     {
-                        if(tag.id == 6)
+                        if(tag.id == 5)
                         {
                             tagOfInterest = tag;
                             tagFound = true;
