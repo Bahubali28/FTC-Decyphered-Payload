@@ -165,15 +165,15 @@ public class Auton_Test extends LinearOpMode
 	   the bar to the backdrop for 5 points
 	   */
                     moveForward(0.5);
-                    TimeUnit.MILLISECONDS.sleep(790);
+                    TimeUnit.MILLISECONDS.sleep(740);
                     Idle();
                     TimeUnit.MILLISECONDS.sleep(700);
                     telemetry.addLine("Turned right");
                     telemetry.update();
                     turnRight(0.5);
-                    TimeUnit.MILLISECONDS.sleep(980);
+                    TimeUnit.MILLISECONDS.sleep(1050);
                     moveForward(0.5);
-                    TimeUnit.MILLISECONDS.sleep(2500);
+                    TimeUnit.MILLISECONDS.sleep(2750);
                     Idle();
                     telemetry.addLine("Autonomous Setup Complete! :)");
                     telemetry.update();
@@ -210,9 +210,9 @@ public class Auton_Test extends LinearOpMode
                         if (step == 2 &&!desYaw && opModeIsActive()) {
                             telemetry.addData("step: ", step);
                             telemetry.update();
-                            if (rot.firstAngle < -5) {
+                            if (rot.firstAngle < -3) {
                                 turnLeft(0.2);
-                            } else if (rot.firstAngle > 5) {
+                            } else if (rot.firstAngle > 3) {
                                 turnRight(0.2);
                             } else {
                                 Idle();
@@ -257,7 +257,7 @@ public class Auton_Test extends LinearOpMode
                         if (step == 5 && !desZ && opModeIsActive()) {
                             telemetry.addData("step: ", step);
                             telemetry.update();
-                            if (tagOfInterest.pose.z > 0.60) {
+                            if (tagOfInterest.pose.z > 0.90) {
                                 moveForward(0.20 );
 
                             } else {
@@ -293,8 +293,8 @@ public class Auton_Test extends LinearOpMode
                             placedPixel = true;
                         }
                         if (placedPixel) {
-                            serIn1.setPower(0.15);
-                            serIn2.setPower(-0.15);
+                            serIn1.setPower(0.5);
+                            serIn2.setPower(-0.5);
                             TimeUnit.MILLISECONDS.sleep(500);
                             serIn1.setPower(0);
                             serIn2.setPower(0);

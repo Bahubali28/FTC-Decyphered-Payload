@@ -153,7 +153,7 @@ public class TensorFlowObjectDetection extends LinearOpMode {
                         telemetry.addLine("Center " + CENTER);
                         telemetry.update();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1100);
+                        TimeUnit.MILLISECONDS.sleep(1000);
                         Idle();
                         step++;
                         placed = true;
@@ -287,7 +287,7 @@ public class TensorFlowObjectDetection extends LinearOpMode {
         visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.75f);
+        tfod.setMinResultConfidence(0.55f);
 
         // Disable or re-enable the TFOD processor at any time.
         visionPortal.setProcessorEnabled(tfod, true);
