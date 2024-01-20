@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import android.util.Size;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
+import java.sql.Time;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -24,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "TensorFlowBlueBack", group = "Concept")
+@Autonomous(name = "TensorFlowBlueBack", group = "Concept", preselectTeleOp = "Payload_TeleOp")
 public class TensorFlowBlueBack extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -166,6 +168,7 @@ public class TensorFlowBlueBack extends LinearOpMode {
                         Idle();
                         moveForward(0.5);
                         TimeUnit.MILLISECONDS.sleep(850);
+                        Idle();
                         step++;
                         placed = true;
                     } else if (LEFT) {
@@ -180,6 +183,7 @@ public class TensorFlowBlueBack extends LinearOpMode {
                         Idle();
                         moveForward(0.5);
                         TimeUnit.MILLISECONDS.sleep(430);
+                        Idle();
                         step++;
                         placed = true;
                     }
@@ -196,7 +200,12 @@ public class TensorFlowBlueBack extends LinearOpMode {
                     if (RIGHT && !exe) {
                         moveBackward(0.5);
                         TimeUnit.MILLISECONDS.sleep(500);
-                        step++;
+                        exe = true;
+                    }
+                    if (LEFT && !exe) {
+                        moveBackward(0.5);
+                        TimeUnit.MILLISECONDS.sleep(400);
+                        Idle();
                         exe = true;
                     }
                 }

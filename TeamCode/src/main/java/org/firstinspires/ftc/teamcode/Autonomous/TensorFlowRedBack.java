@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import android.util.Size;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -24,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "TensorFlowRedBack", group = "Concept")
+@Autonomous(name = "TensorFlowRedBack", group = "Concept", preselectTeleOp = "Payload_TeleOp")
 public class TensorFlowRedBack extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -153,7 +154,7 @@ public class TensorFlowRedBack extends LinearOpMode {
                         telemetry.addLine("Center " + CENTER);
                         telemetry.update();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1100);
+                        TimeUnit.MILLISECONDS.sleep(1000);
                         Idle();
                         step++;
                         placed = true;
@@ -168,7 +169,7 @@ public class TensorFlowRedBack extends LinearOpMode {
                         TimeUnit.MILLISECONDS.sleep(450);
                         Idle();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(500);
+                        TimeUnit.MILLISECONDS.sleep(340);
                         Idle();
                         step++;
                         placed = true;
@@ -180,7 +181,11 @@ public class TensorFlowRedBack extends LinearOpMode {
                         TimeUnit.MILLISECONDS.sleep(250);
                         Idle();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(500);
+                        TimeUnit.MILLISECONDS.sleep(1000);
+                        Idle();
+                        moveBackward(0.5);
+                        TimeUnit.MILLISECONDS.sleep(200);
+                        Idle();
                         step++;
                         placed = true;
                     }
@@ -197,6 +202,7 @@ public class TensorFlowRedBack extends LinearOpMode {
                     if (RIGHT && !exe) {
                         moveBackward(0.5);
                         TimeUnit.MILLISECONDS.sleep(500);
+                        Idle();
                         step++;
                         exe = true;
                     }

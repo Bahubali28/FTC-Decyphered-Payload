@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import android.util.Size;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -24,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "TensorFlow Object Detection", group = "Concept")
+@Autonomous(name = "TensorFlowRedFront", group = "Concept", preselectTeleOp = "Payload_TeleOp")
 public class TensorFlowObjectDetection extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -166,6 +167,7 @@ public class TensorFlowObjectDetection extends LinearOpMode {
                         Idle();
                         moveForward(0.5);
                         TimeUnit.MILLISECONDS.sleep(850);
+                        Idle();
                         step++;
                         placed = true;
                     } else if (LEFT) {
@@ -179,7 +181,8 @@ public class TensorFlowObjectDetection extends LinearOpMode {
                         TimeUnit.MILLISECONDS.sleep(450);
                         Idle();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(240);
+                        TimeUnit.MILLISECONDS.sleep(340);
+                        Idle();
                         step++;
                         placed = true;
                     }
