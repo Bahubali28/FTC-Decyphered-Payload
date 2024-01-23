@@ -780,7 +780,7 @@ abstract class Backdrop extends LinearOpMode{
                 }
                 else
                 {
-                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                    telemetry.addLine("\n But we HAVE seen the tag before; last seen at:");
                     tagToTelemetry(tagOfInterest);
                 }
 
