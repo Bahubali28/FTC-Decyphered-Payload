@@ -2,34 +2,31 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import android.util.Size;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.tfod.TfodProcessor;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.CRServo;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.openftc.apriltag.AprilTagDetection;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.VisionProcessor;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /*
  * This OpMode illustrates the basics of TensorFlow Object Detection,
@@ -38,14 +35,18 @@ import java.util.ArrayList;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Autonomous(name = "Autonomous_RED_FRONT", group = "Autonomous", preselectTeleOp = "Payload_TeleOp")
-public class Autonomous_RED_FRONT extends LinearOpMode {
-
+@Autonomous(name = "TestTFOD", group = "Concept", preselectTeleOp = "Payload_TeleOp")
+public class TestTFOD extends LinearOpMode {
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
     private static final String TFOD_MODEL_ASSET = "RedTeamProp.tflite";
+    private AprilTagProcessor aprilTag;
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
 //    private static final String TFO
@@ -58,37 +59,6 @@ public class Autonomous_RED_FRONT extends LinearOpMode {
     boolean RIGHT;
     boolean CENTER;
     boolean Seen;
-    OpenCvCamera camera;
-    AprilTagDetectionPipeline aprilTagDetectionPipeline;
-
-    static final double FEET_PER_METER = 3.28084;
-
-    // Lens intrinsics
-    // UNITS ARE PIXELS
-    // NOTE: this calibration is for the C920 webcam at 800x448.
-    // You will need to do your own calibration for other configurations!
-    double fx = 578.272;
-    double fy = 578.272;
-    double cx = 402.145;
-    double cy = 221.506;
-
-    // UNITS ARE METERS
-    double tagsize = 0.166;
-
-    int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
-    AprilTagDetection tagOfInterest = null;
-    boolean dontre;
-    boolean desYaw;
-    boolean desX;
-    boolean checkYaw;
-    boolean desZ;
-    boolean checkYaw2;
-
-    boolean parkNeeded;
-    boolean placedPixel = false;
-    int step;
-    private Servo serIn4, serIn5;
-    private CRServo serIn1, serIn2;
 
     /**
      * The variable to store our instance of the TensorFlow Object Detection processor.
@@ -100,6 +70,8 @@ public class Autonomous_RED_FRONT extends LinearOpMode {
      */
     private VisionPortal visionPortal;
     private DcMotor fl, fr, bl, br;
+    private CRServo serIn1, serIn2;
+    private Servo serIn4, serIn5;
     public void moveForward(double power) {
         fl.setPower(-power);
         fr.setPower(-power);
@@ -149,10 +121,22 @@ public class Autonomous_RED_FRONT extends LinearOpMode {
         fr = hardwareMap.get(DcMotor.class, "fr");
         bl = hardwareMap.get(DcMotor.class, "bl");
         br = hardwareMap.get(DcMotor.class, "br");
+        serIn1 = hardwareMap.get(CRServo.class, "serIn1");
+        serIn2 = hardwareMap.get(CRServo.class, "serIn2");
+        serIn4 = hardwareMap.get(Servo.class, "serIn4");
+        serIn5 = hardwareMap.get(Servo.class, "serIn5");
 
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
-        initTfod();
+        serIn1.setDirection(CRServo.Direction.REVERSE);
+        serIn2.setDirection(CRServo.Direction.REVERSE);
+        serIn5.setDirection(Servo.Direction.REVERSE);
+        serIn4.setDirection(Servo.Direction.FORWARD);
+
+        serIn4.setPosition(0);
+        serIn5.setPosition(0);
+
+        initVisionPortal(tfod);
         Seen = false;
         CENTER = false;
         RIGHT = false;
@@ -161,36 +145,20 @@ public class Autonomous_RED_FRONT extends LinearOpMode {
         int step2 = 1;
         boolean exe = false;
         boolean exe2 = false;
-        telemetry.addLine("Initializing...");
-        telemetry.update();
+        boolean dontre = false;
+        boolean tagFound = false;
+        int tagOfInterest = 5;
+        int step = 2;
+        boolean desYaw = false;
+        boolean desX = false;
+        boolean desZ = false;
+        boolean placedPixel = false;
+        boolean checkYaw = false;
+        boolean checkYaw2 = false;
+        boolean parkNeeded = false;
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
-        telemetry.update();
-        serIn4 = hardwareMap.get(Servo.class, "serIn4");
-        serIn5 = hardwareMap.get(Servo.class, "serIn5");
-        serIn1 = hardwareMap.get(CRServo.class, "serIn1");
-        serIn2 = hardwareMap.get(CRServo.class, "serIn2");
-
-        serIn1.setDirection(CRServo.Direction.REVERSE);
-        serIn2.setDirection(CRServo.Direction.REVERSE);
-        serIn5.setDirection(Servo.Direction.REVERSE);
-        serIn4.setDirection(Servo.Direction.FORWARD);
-        serIn4.setPosition(0);
-        serIn5.setPosition(0);
-
-        dontre = false;
-        desYaw = false;
-        checkYaw = false;
-        desX = false;
-        checkYaw2 = false;
-        desZ = false;
-        parkNeeded = true;
-        step = 1;
-        telemetry.addLine("Autonomous_RED_BACK Initialized...");
-        telemetry.update();
-        telemetry.addLine("Everything Works");
-        telemetry.addLine("Ready to Start Autonomous");
         telemetry.update();
         waitForStart();
 
@@ -198,31 +166,37 @@ public class Autonomous_RED_FRONT extends LinearOpMode {
             while (opModeIsActive()) {
 
                 telemetryTfod();
-                if (!dontre) {
-                    if (step2 == 1) {
-                        moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(95);
-                        Idle();
-                        TimeUnit.MILLISECONDS.sleep(100);
-                        step2++;
-                    }
+                if (step2 == 1) {
+                    moveForward(0.5);
+                    TimeUnit.MILLISECONDS.sleep(120);
+                    Idle();
+                    TimeUnit.MILLISECONDS.sleep(100);
+                    step2++;
+                }
+                if (step2 == 2 && !LEFT && !RIGHT) {
+                    moveForward(0.5);
+                    TimeUnit.MILLISECONDS.sleep(100);
+                    Idle();
+                    step2++;
+                }
 //                if (!exe2 && !LEFT && !CENTER){
 //                    strafeRight(0.5);
 //                    TimeUnit.MILLISECONDS.sleep(100);
 //                    Idle();
 //                    exe2 = true;
 //                }
-                    // Push telemetry to the Driver Station.
-                    telemetry.update();
-                    //TODO: Insert conditions
+                // Push telemetry to the Driver Station.
+                telemetry.update();
+                //TODO: Insert conditions
+                if (!dontre) {
                     if (Seen && !placed) {
                         if (CENTER) {
                             telemetry.addLine("Center " + CENTER);
                             telemetry.update();
                             moveForward(0.5);
-                            TimeUnit.MILLISECONDS.sleep(1100);
+                            TimeUnit.MILLISECONDS.sleep(1000);
                             Idle();
-                            step++;
+                            step2++;
                             placed = true;
                         } else if (RIGHT) {
                             telemetry.addLine("Right " + RIGHT);
@@ -233,7 +207,8 @@ public class Autonomous_RED_FRONT extends LinearOpMode {
                             Idle();
                             moveForward(0.5);
                             TimeUnit.MILLISECONDS.sleep(850);
-                            step++;
+                            Idle();
+                            step2++;
                             placed = true;
                         } else if (LEFT) {
                             telemetry.addLine("Left " + LEFT);
@@ -246,8 +221,9 @@ public class Autonomous_RED_FRONT extends LinearOpMode {
                             TimeUnit.MILLISECONDS.sleep(450);
                             Idle();
                             moveForward(0.5);
-                            TimeUnit.MILLISECONDS.sleep(240);
-                            step++;
+                            TimeUnit.MILLISECONDS.sleep(340);
+                            Idle();
+                            step2++;
                             placed = true;
                         }
                     } else {
@@ -256,143 +232,81 @@ public class Autonomous_RED_FRONT extends LinearOpMode {
                     if (placed && !exe) {
                         if (CENTER && !exe) {
                             moveBackward(0.5);
-                            TimeUnit.MILLISECONDS.sleep(500);
+                            TimeUnit.MILLISECONDS.sleep(300);
                             Idle();
                             turnRight(0.5);
                             TimeUnit.MILLISECONDS.sleep(980);
                             Idle();
                             exe = true;
-                            dontre = true;
                             visionPortal.close();
-                            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-                            camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-                            aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-                            camera.setPipeline(aprilTagDetectionPipeline);
-                            camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-                            {
-                                @Override
-                                public void onOpened()
-                                {
-                                    camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
-                                }
-
-                                @Override
-                                public void onError(int errorCode)
-                                {
-
-                                }
-                            });
-
-                            telemetry.setMsTransmissionInterval(50);
+                            initVisionPortal(aprilTag);
+                            dontre = true;
                         }
                         if (RIGHT && !exe) {
                             moveBackward(0.5);
                             TimeUnit.MILLISECONDS.sleep(500);
-                            step++;
+                            Idle();
+                            turnRight(0.5);
+                            TimeUnit.MILLISECONDS.sleep(730);
+                            Idle();
+                            strafeRight(0.5);
+                            TimeUnit.MILLISECONDS.sleep(200);
+                            Idle();
+                            step2++;
                             exe = true;
-                            dontre = true;
                             visionPortal.close();
-                            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-                            camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-                            aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-                            camera.setPipeline(aprilTagDetectionPipeline);
-                            camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-                            {
-                                @Override
-                                public void onOpened()
-                                {
-                                    camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
-                                }
-
-                                @Override
-                                public void onError(int errorCode)
-                                {
-
-                                }
-                            });
-
-                            telemetry.setMsTransmissionInterval(50);
+                            initVisionPortal(aprilTag);
+                            dontre = true;
                         }
                         if (LEFT && !exe) {
                             moveBackward(0.5);
                             TimeUnit.MILLISECONDS.sleep(500);
-                            step++;
+                            Idle();
+                            turnRight(0.5);
+                            TimeUnit.MILLISECONDS.sleep(1200);
+                            Idle();
+                            strafeLeft(0.5);
+                            TimeUnit.MILLISECONDS.sleep(200);
+                            Idle();
+                            step2++;
                             exe = true;
-                            dontre = true;
                             visionPortal.close();
-                            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-                            camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-                            aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-                            camera.setPipeline(aprilTagDetectionPipeline);
-                            camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-                            {
-                                @Override
-                                public void onOpened()
-                                {
-                                    camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
-                                }
-
-                                @Override
-                                public void onError(int errorCode)
-                                {
-
-                                }
-                            });
-
-                            telemetry.setMsTransmissionInterval(50);
+                            initVisionPortal(aprilTag);
+                            dontre = true;
                         }
                     }
                 }
-                if (step == 1) {
-                    try{
-	    /*
-	    1. Move forward to the second bar
-	   2. Move sideways through
-	   the bar to the backdrop for 5 points
-	   */
+                if (dontre) {
+                ArrayList<AprilTagDetection> currentDetections = aprilTag.getDetections();
+                telemetry.addData("# AprilTags Detected", currentDetections.size());
 
-                        moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(200);
-                        Idle();
-                        telemetry.addLine("Autonomous Setup Complete! :)");
-                        telemetry.update();
-                    } catch(InterruptedException e){
-//                    TODO: handle exception
-                    }
-                    step++;
-                }
-                telemetry.addLine("Moving to the April Tag...");
-                telemetry.update();
-                ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
-
-                if (currentDetections != null && currentDetections.size() != 0 && opModeIsActive())
-                {
-                    boolean tagFound = false;
-
-                    for(AprilTagDetection tag : currentDetections)
-                    {
-                        if(tag.id == 5)
-                        {
-                            tagOfInterest = tag;
+                // Step through the list of detections and display info for each one.
+                for (AprilTagDetection detection : currentDetections) {
+                    if (detection.metadata != null) {
+                        if (detection.id == tagOfInterest) {
                             tagFound = true;
                             break;
                         }
-                    }
+                    }   // end for() loop
 
-                    if(tagFound)
-                    {
+                    // Add "key" information to telemetry
+                    telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+                    telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+                    telemetry.addLine("RBE = Range, Bearing & Elevation");
+                    telemetry.update();
+                    //Share the CPU.
+                    sleep(20);
+                    if (tagFound) {
                         double deadzone = 0.1;
 
                         telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                        tagToTelemetry(tagOfInterest);
-                        Orientation rot = Orientation.getOrientation(tagOfInterest.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
                         do {
-                            if (step == 2 &&!desYaw && opModeIsActive()) {
+                            if (step == 2 && !desYaw && opModeIsActive()) {
                                 telemetry.addData("step: ", step);
                                 telemetry.update();
-                                if (rot.firstAngle < -5) {
+                                if (detection.ftcPose.yaw < -3) {
                                     turnLeft(0.2);
-                                } else if (rot.firstAngle > 5) {
+                                } else if (detection.ftcPose.yaw > 3) {
                                     turnRight(0.2);
                                 } else {
                                     Idle();
@@ -405,10 +319,9 @@ public class Autonomous_RED_FRONT extends LinearOpMode {
                             if (step == 3 && !desX && opModeIsActive()) {
                                 telemetry.addData("step: ", step);
                                 telemetry.update();
-                                if(tagOfInterest.pose.x < -deadzone) {
+                                if (detection.ftcPose.x < -deadzone) {
                                     strafeLeft(0.4);
-                                }
-                                else if(tagOfInterest.pose.x > deadzone) {
+                                } else if (detection.ftcPose.x > deadzone) {
                                     // do something else
                                     strafeRight(0.4);
                                 } else {
@@ -422,9 +335,9 @@ public class Autonomous_RED_FRONT extends LinearOpMode {
                             if (step == 4 && !checkYaw && opModeIsActive()) {
                                 telemetry.addData("step: ", step);
                                 telemetry.update();
-                                if (rot.firstAngle < -5) {
+                                if (detection.ftcPose.yaw < -5) {
                                     turnLeft(0.25);
-                                } else if (rot.firstAngle > 5) {
+                                } else if (detection.ftcPose.yaw > 5) {
                                     turnRight(0.25);
                                 } else {
                                     Idle();
@@ -437,9 +350,8 @@ public class Autonomous_RED_FRONT extends LinearOpMode {
                             if (step == 5 && !desZ && opModeIsActive()) {
                                 telemetry.addData("step: ", step);
                                 telemetry.update();
-                                if (tagOfInterest.pose.z > 0.60) {
-                                    moveForward(0.20 );
-
+                                if (detection.ftcPose.z > 0.90) {
+                                    moveForward(0.20);
                                 } else {
                                     Idle();
                                     desZ = true;
@@ -451,9 +363,9 @@ public class Autonomous_RED_FRONT extends LinearOpMode {
                             if (step == 6 && !checkYaw2 && opModeIsActive()) {
                                 telemetry.addData("step: ", step);
                                 telemetry.update();
-                                if (rot.firstAngle < -2) {
+                                if (detection.ftcPose.yaw < -2) {
                                     turnLeft(0.1);
-                                } else if (rot.firstAngle > 2) {
+                                } else if (detection.ftcPose.yaw > 2) {
                                     turnRight(0.1);
                                 } else {
                                     Idle();
@@ -473,8 +385,8 @@ public class Autonomous_RED_FRONT extends LinearOpMode {
                                 placedPixel = true;
                             }
                             if (placedPixel) {
-                                serIn1.setPower(0.15);
-                                serIn2.setPower(-0.15);
+                                serIn1.setPower(0.5);
+                                serIn2.setPower(-0.5);
                                 TimeUnit.MILLISECONDS.sleep(500);
                                 serIn1.setPower(0);
                                 serIn2.setPower(0);
@@ -531,43 +443,8 @@ public class Autonomous_RED_FRONT extends LinearOpMode {
                         */
 
                     }
-                    else
-                    {
-                        Idle();
-                        telemetry.addLine("Don't see tag of interest :(");
-
-                        if(tagOfInterest == null)
-                        {
-                            telemetry.addLine("(The tag has never been seen)");
-                        }
-                        else
-                        {
-                            telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                            tagToTelemetry(tagOfInterest);
-                        }
                     }
-
-                    telemetry.update();
-                    sleep(20);
                 }
-                else
-                {
-                    Idle();
-                    telemetry.addLine("Don't see tag of interest :(");
-
-                    if(tagOfInterest == null)
-                    {
-                        telemetry.addLine("(The tag has never been seen)");
-                    }
-                    else
-                    {
-                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                        tagToTelemetry(tagOfInterest);
-                    }
-
-                }
-                //Share the CPU.
-                sleep(20);
             }
         }
 
@@ -579,29 +456,59 @@ public class Autonomous_RED_FRONT extends LinearOpMode {
     /**
      * Initialize the TensorFlow Object Detection processor.
      */
-    private void initTfod() {
+    private void initVisionPortal(VisionProcessor processor) {
 
         // Create the TensorFlow processor by using a builder.
-        tfod = new TfodProcessor.Builder()
+        if (processor == tfod) {
+            tfod = new TfodProcessor.Builder()
 
-                // With the following lines commented out, the default TfodProcessor Builder
-                // will load the default model for the season. To define a custom model to load,
-                // choose one of the following:
-                //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
-                //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
+                    // With the following lines commented out, the default TfodProcessor Builder
+                    // will load the default model for the season. To define a custom model to load,
+                    // choose one of the following:
+                    //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
+                    //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
 //                .setModelFileName(TFOD_MODEL_FILE)
-                .setModelAssetName(TFOD_MODEL_ASSET)
+                    .setModelAssetName(TFOD_MODEL_ASSET)
 
-                // The following default settings are available to un-comment and edit as needed to
-                // set parameters for custom models.
-                .setModelLabels(LABELS)
-                //.setIsModelTensorFlow2(true)
-                //.setIsModelQuantized(true)
-                //.setModelInputSize(300)
-                //.setModelAspectRatio(16.0 / 9.0)
+                    // The following default settings are available to un-comment and edit as needed to
+                    // set parameters for custom models.
+                    .setModelLabels(LABELS)
+                    //.setIsModelTensorFlow2(true)
+                    //.setIsModelQuantized(true)
+                    //.setModelInputSize(300)
+                    //.setModelAspectRatio(16.0 / 9.0)
 
-                .build();
+                    .build();
+            // Set confidence threshold for TFOD recognitions, at any time.
+            tfod.setMinResultConfidence(0.55f);
+        } else if (processor == aprilTag) {
+            aprilTag = new AprilTagProcessor.Builder()
 
+                    // The following default settings are available to un-comment and edit as needed.
+                    .setDrawAxes(true)
+                    .setDrawCubeProjection(true)
+                    .setDrawTagOutline(true)
+                    .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                    .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                    .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+
+                    // == CAMERA CALIBRATION ==
+                    // If you do not manually specify calibration parameters, the SDK will attempt
+                    // to load a predefined calibration for your camera.
+                    .setLensIntrinsics(fx, fy, cx, cy)
+                    // ... these parameters are fx, fy, cx, cy.
+
+                    .build();
+
+            // Adjust Image Decimation to trade-off detection-range for detection-rate.
+            // eg: Some typical detection data using a Logitech C920 WebCam
+            // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
+            // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
+            // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second (default)
+            // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second (default)
+            // Note: Decimation can be changed on-the-fly to adapt during a match.
+            aprilTag.setDecimation(2);
+        }
         // Create the vision portal by using a builder.
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
@@ -619,24 +526,21 @@ public class Autonomous_RED_FRONT extends LinearOpMode {
         builder.enableLiveView(true);
 
         // Set the stream format; MJPEG uses less bandwidth than default YUY2.
-        //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
+        builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
 
         // Choose whether or not LiveView stops if no processors are enabled.
         // If set "true", monitor shows solid orange screen if no processors enabled.
         // If set "false", monitor shows camera view without annotations.
-        builder.setAutoStopLiveView(false);
+        builder.setAutoStopLiveView(true);
 
         // Set and enable the processor.
-        builder.addProcessor(tfod);
+        builder.addProcessor(processor);
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
 
-        // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.75f);
-
         // Disable or re-enable the TFOD processor at any time.
-        visionPortal.setProcessorEnabled(tfod, true);
+        visionPortal.setProcessorEnabled(processor, true);
 
     }   // end method initTfod()
 
@@ -672,18 +576,10 @@ public class Autonomous_RED_FRONT extends LinearOpMode {
             Seen = true;
         }   // end for() loop
 
-    }
-    void tagToTelemetry(AprilTagDetection detection) {
-        Orientation rot = Orientation.getOrientation(detection.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
+    }// end method telemetryTfod()
+    private void telemetryAprilTag() {
 
-        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x * FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y * FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z * FEET_PER_METER));
-        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", rot.firstAngle));
-        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", rot.secondAngle));
-        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", rot.thirdAngle));
-    }
-//        telemetryTfod();
+
+    }   // end method telemetryAprilTag()
 
 }   // end class

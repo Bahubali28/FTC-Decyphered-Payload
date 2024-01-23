@@ -183,7 +183,6 @@ public class TensorFlowBlueBack extends LinearOpMode {
                         Idle();
                         moveForward(0.5);
                         TimeUnit.MILLISECONDS.sleep(430);
-                        Idle();
                         step++;
                         placed = true;
                     }
