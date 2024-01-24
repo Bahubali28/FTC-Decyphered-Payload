@@ -37,7 +37,7 @@ import java.util.ArrayList;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Autonomous(name = "Auton_RED_FRONT_AD", group = "Autonomous") //, preselectTeleOp = "Payload_TeleOp")
+@Autonomous(name = "Autonomous_RED_FRONT", group = "Autonomous", preselectTeleOp = "Payload_TeleOp")
 public abstract class Autonomous_RED_FRONT extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -780,7 +780,7 @@ abstract class Backdrop extends LinearOpMode{
                 }
                 else
                 {
-                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+                    telemetry.addLine("\n But we HAVE seen the tag before; last seen at:");
                     tagToTelemetry(tagOfInterest);
                 }
 
