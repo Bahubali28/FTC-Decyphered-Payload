@@ -159,29 +159,29 @@ public class Auton_Test extends LinearOpMode
 
         while (opModeIsActive()) {
             if (step == 1) {
-                try{
-	    /*
-	    1. Move forward to the second bar
-	   2. Move sideways through
-	   the bar to the backdrop for 5 points
-	   */
-                    moveForward(0.5);
-                    TimeUnit.MILLISECONDS.sleep(740);
-                    Idle();
-                    TimeUnit.MILLISECONDS.sleep(700);
-                    telemetry.addLine("Turned right");
-                    telemetry.update();
-                    turnRight(0.5);
-                    TimeUnit.MILLISECONDS.sleep(1050);
-                    moveForward(0.5);
-                    TimeUnit.MILLISECONDS.sleep(2750);
-                    Idle();
-                    telemetry.addLine("Autonomous Setup Complete! :)");
-                    telemetry.update();
-                } catch(InterruptedException e){
-//                    TODO: handle exception
-                }
-                step++;
+//                try{
+//	    /*
+//	    1. Move forward to the second bar
+//	   2. Move sideways through
+//	   the bar to the backdrop for 5 points
+//	   */
+//                    moveForward(0.5);
+//                    TimeUnit.MILLISECONDS.sleep(740);
+//                    Idle();
+//                    TimeUnit.MILLISECONDS.sleep(700);
+//                    telemetry.addLine("Turned right");
+//                    telemetry.update();
+//                    turnRight(0.5);
+//                    TimeUnit.MILLISECONDS.sleep(1050);
+//                    moveForward(0.5);
+//                    TimeUnit.MILLISECONDS.sleep(2750);
+//                    Idle();
+//                    telemetry.addLine("Autonomous Setup Complete! :)");
+//                    telemetry.update();
+//                } catch(InterruptedException e){
+////                    TODO: handle exception
+//                }
+//                step++;
             }
             telemetry.addLine("Moving to the April Tag...");
             telemetry.update();
