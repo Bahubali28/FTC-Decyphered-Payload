@@ -153,41 +153,42 @@ public class Auton_RED_TEST extends LinearOpMode {
                         telemetry.addLine("Center " + CENTER);
                         telemetry.update();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1100);
+                        TimeUnit.MILLISECONDS.sleep(800);
                         Idle();
                         step++;
                         placed = true;
                         //now move back to X
                         moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(130);
+                        TimeUnit.MILLISECONDS.sleep(300);
                         Idle();
                         turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1600);
+                        TimeUnit.MILLISECONDS.sleep(900);
                         Idle();
                         moveForward(0.5);
                         TimeUnit.MILLISECONDS.sleep(500);
+                        Idle();
                     } else if (RIGHT) {
                         telemetry.addLine("Right " + RIGHT);
                         telemetry.update();
                         turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(250);
+                        TimeUnit.MILLISECONDS.sleep(300);
                         Idle();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1050);
+                        TimeUnit.MILLISECONDS.sleep(800);
                         step++;
                         placed = true;
                         //move back to x
                         moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(850);
+                        TimeUnit.MILLISECONDS.sleep(300);
                         Idle();
                         turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(250);
+                        TimeUnit.MILLISECONDS.sleep(700);
                         Idle();
                     } else if (LEFT) {
                         telemetry.addLine("Left " + LEFT);
                         telemetry.update();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(250);
+                        TimeUnit.MILLISECONDS.sleep(150);
                         Idle();
                         TimeUnit.MILLISECONDS.sleep(550);
                         turnLeft(0.5);
@@ -199,10 +200,10 @@ public class Auton_RED_TEST extends LinearOpMode {
                         placed = true;
                         //move back to x
                         moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(400);
+                        TimeUnit.MILLISECONDS.sleep(300);
                         Idle();
                         turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1600);
+                        TimeUnit.MILLISECONDS.sleep(1300);
                         Idle();
                         moveForward(0.5);
                         TimeUnit.MILLISECONDS.sleep(500);
@@ -222,7 +223,7 @@ public class Auton_RED_TEST extends LinearOpMode {
     }   // end runOpMode()
 
     /**
-     * Initialize the TensorFlow Object Detection processor.
+     * Initialize the TensorFlow Object Detection processor
      */
     private void initTfod() {
 
@@ -299,7 +300,7 @@ public class Auton_RED_TEST extends LinearOpMode {
             double y = (recognition.getTop() + recognition.getBottom()) / 2;
             Seen = true;
             telemetry.addData("", " ");
-            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+            telemetry.addData("Image ", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
             if (x <= 300) {
