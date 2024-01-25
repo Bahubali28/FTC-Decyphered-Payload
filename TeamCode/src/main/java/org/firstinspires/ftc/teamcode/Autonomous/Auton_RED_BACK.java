@@ -167,6 +167,7 @@ public class Auton_RED_BACK extends LinearOpMode {
                         moveForward(0.5);
                         TimeUnit.MILLISECONDS.sleep(2500);
                         Idle();
+                        visionPortal.close();
                     } else if (RIGHT) {
                         telemetry.addLine("Right " + RIGHT);
                         telemetry.update();
@@ -187,6 +188,7 @@ public class Auton_RED_BACK extends LinearOpMode {
                         moveForward(0.5);
                         TimeUnit.MILLISECONDS.sleep(2500);
                         Idle();
+                        visionPortal.close();
                     } else if (LEFT) {
                         telemetry.addLine("Left " + LEFT);
                         telemetry.update();
@@ -211,7 +213,11 @@ public class Auton_RED_BACK extends LinearOpMode {
                         moveForward(0.5);
                         TimeUnit.MILLISECONDS.sleep(2500);
                         Idle();
+                        visionPortal.close();
                     }
+                    //call step-2
+                    Auton_Test step2 = new Auton_Test();
+                    step2.runOpMode();
                 } else {
                     Idle();
                 }
