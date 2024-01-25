@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Autonomous(name = "TestTFOD", group = "Concept", preselectTeleOp = "Payload_TeleOp")
 public class TestTFOD extends LinearOpMode {
+    private static boolean aprilTagDetectionIsActive;
     double fx = 578.272;
     double fy = 578.272;
     double cx = 402.145;
@@ -155,7 +156,7 @@ public class TestTFOD extends LinearOpMode {
         boolean placedPixel = false;
         boolean checkYaw = false;
         boolean checkYaw2 = false;
-        boolean parkNeeded = false;
+        aprilTagDetectionIsActive = false;
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
@@ -277,172 +278,174 @@ public class TestTFOD extends LinearOpMode {
                     }
                 }
                 if (dontre) {
-                ArrayList<AprilTagDetection> currentDetections = aprilTag.getDetections();
-                telemetry.addData("# AprilTags Detected", currentDetections.size());
+                    while (aprilTagDetectionIsActive) {
+                        ArrayList<AprilTagDetection> currentDetections = aprilTag.getDetections();
+                        telemetry.addData("# AprilTags Detected", currentDetections.size());
 
-                // Step through the list of detections and display info for each one.
-                for (AprilTagDetection detection : currentDetections) {
-                    if (detection.metadata != null) {
-                        if (detection.id == tagOfInterest) {
-                            tagFound = true;
-                            break;
-                        }
-                    }   // end for() loop
+                        // Step through the list of detections and display info for each one.
+                        for (AprilTagDetection detection : currentDetections) {
+                            if (detection.metadata != null) {
+                                if (detection.id == tagOfInterest) {
+                                    tagFound = true;
+                                    break;
+                                }
+                            }   // end for() loop
 
-                    // Add "key" information to telemetry
-                    telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
-                    telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
-                    telemetry.addLine("RBE = Range, Bearing & Elevation");
-                    telemetry.update();
-                    //Share the CPU.
-                    sleep(20);
-                    if (tagFound) {
-                        double deadzone = 0.1;
+                            // Add "key" information to telemetry
+                            telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+                            telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+                            telemetry.addLine("RBE = Range, Bearing & Elevation");
+                            telemetry.update();
+                            //Share the CPU.
+                            sleep(20);
+                            if (tagFound) {
+                                double deadzone = 0.1;
 
-                        telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                        do {
-                            if (step == 2 && !desYaw && opModeIsActive()) {
-                                telemetry.addData("step: ", step);
-                                telemetry.update();
-                                if (detection.ftcPose.yaw < -3) {
-                                    turnLeft(0.2);
-                                } else if (detection.ftcPose.yaw > 3) {
-                                    turnRight(0.2);
-                                } else {
-                                    Idle();
-                                    desYaw = true;
-                                    telemetry.addData("desYaw: ", desYaw);
-                                    telemetry.update();
-                                    step++;
-                                }
-                            }
-                            if (step == 3 && !desX && opModeIsActive()) {
-                                telemetry.addData("step: ", step);
-                                telemetry.update();
-                                if (detection.ftcPose.x < -deadzone) {
-                                    strafeLeft(0.4);
-                                } else if (detection.ftcPose.x > deadzone) {
-                                    // do something else
-                                    strafeRight(0.4);
-                                } else {
-                                    Idle();
-                                    desX = true;
-                                    telemetry.addData("desX: ", desX);
-                                    telemetry.update();
-                                    step++;
-                                }
-                            }
-                            if (step == 4 && !checkYaw && opModeIsActive()) {
-                                telemetry.addData("step: ", step);
-                                telemetry.update();
-                                if (detection.ftcPose.yaw < -5) {
-                                    turnLeft(0.25);
-                                } else if (detection.ftcPose.yaw > 5) {
-                                    turnRight(0.25);
-                                } else {
-                                    Idle();
-                                    checkYaw = true;
-                                    telemetry.addData("checkYaw: ", checkYaw);
-                                    telemetry.update();
-                                    step++;
-                                }
-                            }
-                            if (step == 5 && !desZ && opModeIsActive()) {
-                                telemetry.addData("step: ", step);
-                                telemetry.update();
-                                if (detection.ftcPose.z > 0.90) {
-                                    moveForward(0.20);
-                                } else {
-                                    Idle();
-                                    desZ = true;
-                                    telemetry.addData("desZ: ", desZ);
-                                    telemetry.update();
-                                    step++;
-                                }
-                            }
-                            if (step == 6 && !checkYaw2 && opModeIsActive()) {
-                                telemetry.addData("step: ", step);
-                                telemetry.update();
-                                if (detection.ftcPose.yaw < -2) {
-                                    turnLeft(0.1);
-                                } else if (detection.ftcPose.yaw > 2) {
-                                    turnRight(0.1);
-                                } else {
-                                    Idle();
-                                    checkYaw2 = true;
-                                    telemetry.addData("checkYaw2: ", checkYaw2);
-                                    telemetry.update();
-                                    step++;
-                                }
-                            }
-                            if (desX && desZ) {
-                                telemetry.addLine("Reached the april tag.");
-                                telemetry.addLine("Placing the pixel");
-                                telemetry.update();
-                                serIn4.setPosition(0.75);
-                                serIn5.setPosition(0.75);
-                                TimeUnit.SECONDS.sleep(1);
-                                placedPixel = true;
-                            }
-                            if (placedPixel) {
-                                serIn1.setPower(0.5);
-                                serIn2.setPower(-0.5);
-                                TimeUnit.MILLISECONDS.sleep(500);
-                                serIn1.setPower(0);
-                                serIn2.setPower(0);
-                                TimeUnit.SECONDS.sleep(1);
-                                serIn4.setPosition(0);
-                                serIn5.setPosition(0);
-                                step++;
-                                moveBackward(0.3);
-                                TimeUnit.MILLISECONDS.sleep(300);
-                                Idle();
-                                TimeUnit.MILLISECONDS.sleep(300);
-                                turnRight(0.5);
-                                TimeUnit.MILLISECONDS.sleep(845);
-                                Idle();
+                                telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+                                do {
+                                    if (step == 2 && !desYaw && opModeIsActive()) {
+                                        telemetry.addData("step: ", step);
+                                        telemetry.update();
+                                        if (detection.ftcPose.yaw < -3) {
+                                            turnLeft(0.2);
+                                        } else if (detection.ftcPose.yaw > 3) {
+                                            turnRight(0.2);
+                                        } else {
+                                            Idle();
+                                            desYaw = true;
+                                            telemetry.addData("desYaw: ", desYaw);
+                                            telemetry.update();
+                                            step++;
+                                        }
+                                    }
+                                    if (step == 3 && !desX && opModeIsActive()) {
+                                        telemetry.addData("step: ", step);
+                                        telemetry.update();
+                                        if (detection.ftcPose.x < -deadzone) {
+                                            strafeLeft(0.4);
+                                        } else if (detection.ftcPose.x > deadzone) {
+                                            // do something else
+                                            strafeRight(0.4);
+                                        } else {
+                                            Idle();
+                                            desX = true;
+                                            telemetry.addData("desX: ", desX);
+                                            telemetry.update();
+                                            step++;
+                                        }
+                                    }
+                                    if (step == 4 && !checkYaw && opModeIsActive()) {
+                                        telemetry.addData("step: ", step);
+                                        telemetry.update();
+                                        if (detection.ftcPose.yaw < -5) {
+                                            turnLeft(0.25);
+                                        } else if (detection.ftcPose.yaw > 5) {
+                                            turnRight(0.25);
+                                        } else {
+                                            Idle();
+                                            checkYaw = true;
+                                            telemetry.addData("checkYaw: ", checkYaw);
+                                            telemetry.update();
+                                            step++;
+                                        }
+                                    }
+                                    if (step == 5 && !desZ && opModeIsActive()) {
+                                        telemetry.addData("step: ", step);
+                                        telemetry.update();
+                                        if (detection.ftcPose.z > 0.90) {
+                                            moveForward(0.20);
+                                        } else {
+                                            Idle();
+                                            desZ = true;
+                                            telemetry.addData("desZ: ", desZ);
+                                            telemetry.update();
+                                            step++;
+                                        }
+                                    }
+                                    if (step == 6 && !checkYaw2 && opModeIsActive()) {
+                                        telemetry.addData("step: ", step);
+                                        telemetry.update();
+                                        if (detection.ftcPose.yaw < -2) {
+                                            turnLeft(0.1);
+                                        } else if (detection.ftcPose.yaw > 2) {
+                                            turnRight(0.1);
+                                        } else {
+                                            Idle();
+                                            checkYaw2 = true;
+                                            telemetry.addData("checkYaw2: ", checkYaw2);
+                                            telemetry.update();
+                                            step++;
+                                        }
+                                    }
+                                    if (desX && desZ) {
+                                        telemetry.addLine("Reached the april tag.");
+                                        telemetry.addLine("Placing the pixel");
+                                        telemetry.update();
+                                        serIn4.setPosition(0.75);
+                                        serIn5.setPosition(0.75);
+                                        TimeUnit.SECONDS.sleep(1);
+                                        placedPixel = true;
+                                    }
+                                    if (placedPixel) {
+                                        serIn1.setPower(0.5);
+                                        serIn2.setPower(-0.5);
+                                        TimeUnit.MILLISECONDS.sleep(500);
+                                        serIn1.setPower(0);
+                                        serIn2.setPower(0);
+                                        TimeUnit.SECONDS.sleep(1);
+                                        serIn4.setPosition(0);
+                                        serIn5.setPosition(0);
+                                        step++;
+                                        moveBackward(0.3);
+                                        TimeUnit.MILLISECONDS.sleep(300);
+                                        Idle();
+                                        TimeUnit.MILLISECONDS.sleep(300);
+                                        turnRight(0.5);
+                                        TimeUnit.MILLISECONDS.sleep(845);
+                                        Idle();
+                                        moveForward(0.5);
+                                /*Later, this distance needs to be altered
+                                because the distance between the april tags
+                                makes the distance to park longer or shorter.
+                                 */
+                                        TimeUnit.MILLISECONDS.sleep(820);
+                                        Idle();
+                                        turnLeft(0.5);
+                                        TimeUnit.MILLISECONDS.sleep(700);
+                                        Idle();
+                                /*
                                 moveForward(0.5);
-                            /*Later, this distance needs to be altered
-                            because the distance between the april tags
-                            makes the distance to park longer or shorter.
-                             */
-                                TimeUnit.MILLISECONDS.sleep(820);
+                                TimeUnit.MILLISECONDS.sleep(500);
+                                */
+                                        Idle();
+                                        telemetry.addLine("-------------------------------");
+                                        telemetry.addLine("Autonomous complete.");
+                                        telemetry.addLine("-------------------------------");
+                                        telemetry.update();
+                                    }
+
+                                } while (step == 9 && desX && checkYaw && desZ && checkYaw2 && opModeIsActive());
+                        /*
+                            if (step == 66) {
+                                strafeRight(0.5);
+                                TimeUnit.MILLISECONDS.sleep(250);
                                 Idle();
-                                turnLeft(0.5);
-                                TimeUnit.MILLISECONDS.sleep(700);
-                                Idle();
-                            /*
-                            moveForward(0.5);
-                            TimeUnit.MILLISECONDS.sleep(500);
-                            */
-                                Idle();
-                                telemetry.addLine("-------------------------------");
-                                telemetry.addLine("Autonomous complete.");
-                                telemetry.addLine("-------------------------------");
+                                telemetry.addLine("Strafed Left");
+                                telemetry.addLine("Ready to park.");
                                 telemetry.update();
+                                moveForward(0.5);
+                                TimeUnit.MILLISECONDS.sleep(250);
+                                Idle();
+                                telemetry.addLine("Parked");
+                                telemetry.update();
+                                parkNeeded = false;
+                            } else if (!parkNeeded) {
+                                step++;
                             }
+                            */
 
-                        } while (step == 9 && desX && checkYaw && desZ && checkYaw2 && opModeIsActive() && parkNeeded);
-                    /*
-                        if (step == 66) {
-                            strafeRight(0.5);
-                            TimeUnit.MILLISECONDS.sleep(250);
-                            Idle();
-                            telemetry.addLine("Strafed Left");
-                            telemetry.addLine("Ready to park.");
-                            telemetry.update();
-                            moveForward(0.5);
-                            TimeUnit.MILLISECONDS.sleep(250);
-                            Idle();
-                            telemetry.addLine("Parked");
-                            telemetry.update();
-                            parkNeeded = false;
-                        } else if (!parkNeeded) {
-                            step++;
+                            }
                         }
-                        */
-
-                    }
                     }
                 }
             }
@@ -508,6 +511,7 @@ public class TestTFOD extends LinearOpMode {
             // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second (default)
             // Note: Decimation can be changed on-the-fly to adapt during a match.
             aprilTag.setDecimation(2);
+            TestTFOD.aprilTagDetectionIsActive = true;
         }
         // Create the vision portal by using a builder.
         VisionPortal.Builder builder = new VisionPortal.Builder();
