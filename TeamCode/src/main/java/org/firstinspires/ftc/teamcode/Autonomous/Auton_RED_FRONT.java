@@ -23,8 +23,8 @@ import java.util.concurrent.TimeUnit;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Autonomous(name = "Auton_RED_BACK", group = "Concept", preselectTeleOp = "Payload_TeleOp")
-public class Auton_RED_BACK extends LinearOpMode {
+@Autonomous(name = "Auton_RED_FRONT", group = "Concept", preselectTeleOp = "Payload_TeleOp")
+public class Auton_RED_FRONT extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -53,7 +53,6 @@ public class Auton_RED_BACK extends LinearOpMode {
      * The variable to store our instance of the vision portal.
      */
     private VisionPortal visionPortal;
-    //One mediocre code and a dream
     private DcMotor fl, fr, bl, br;
     public void moveForward(double power) {
         fl.setPower(-power);
@@ -162,10 +161,10 @@ public class Auton_RED_BACK extends LinearOpMode {
                         TimeUnit.MILLISECONDS.sleep(300);
                         Idle();
                         turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(980);
+                        TimeUnit.MILLISECONDS.sleep(900);
                         Idle();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(2500);
+                        TimeUnit.MILLISECONDS.sleep(500);
                         Idle();
                     } else if (RIGHT) {
                         telemetry.addLine("Right " + RIGHT);
@@ -182,10 +181,10 @@ public class Auton_RED_BACK extends LinearOpMode {
                         TimeUnit.MILLISECONDS.sleep(300);
                         Idle();
                         turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(800);
+                        TimeUnit.MILLISECONDS.sleep(700);
                         Idle();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(2500);
+                        TimeUnit.MILLISECONDS.sleep(500);
                         Idle();
                     } else if (LEFT) {
                         telemetry.addLine("Left " + LEFT);
@@ -209,7 +208,7 @@ public class Auton_RED_BACK extends LinearOpMode {
                         TimeUnit.MILLISECONDS.sleep(1300);
                         Idle();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(2500);
+                        TimeUnit.MILLISECONDS.sleep(500);
                         Idle();
                     }
                 } else {
