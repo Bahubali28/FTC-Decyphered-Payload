@@ -7,6 +7,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -20,7 +24,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-@Disabled
+
 @Autonomous(name = "Autonomous_Test", group = "Auton_Test", preselectTeleOp = "Payload_TeleOp")
 public class Auton_Test extends LinearOpMode
 {
@@ -102,6 +106,9 @@ public class Auton_Test extends LinearOpMode
     }
     @Override
     public void runOpMode() throws InterruptedException {
+    }
+
+    public void runOpModeCustom(HardwareMap hardwareMap, Telemetry telemetry) throws InterruptedException {
         telemetry.addLine("Initializing...");
         telemetry.update();
         fl = hardwareMap.get(DcMotor.class, "fl");

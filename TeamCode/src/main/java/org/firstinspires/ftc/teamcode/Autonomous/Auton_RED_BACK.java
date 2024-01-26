@@ -216,8 +216,8 @@ public class Auton_RED_BACK extends LinearOpMode {
                         visionPortal.close();
                     }
                     //call step-2
-                    Auton_Test step2 = new Auton_Test();
-                    step2.runOpMode();
+                    Auton_Test autonTest = new Auton_Test();
+                    autonTest.runOpModeCustom(hardwareMap, telemetry);
                 } else {
                     Idle();
                 }
