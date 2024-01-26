@@ -278,7 +278,7 @@ public class TestTFOD extends LinearOpMode {
                     }
                 }
                 if (dontre) {
-                    while (aprilTagDetectionIsActive) {
+                    while (aprilTagDetectionIsActive && opModeIsActive()) {
                         ArrayList<AprilTagDetection> currentDetections = aprilTag.getDetections();
                         telemetry.addData("# AprilTags Detected", currentDetections.size());
 
@@ -498,7 +498,7 @@ public class TestTFOD extends LinearOpMode {
                     // == CAMERA CALIBRATION ==
                     // If you do not manually specify calibration parameters, the SDK will attempt
                     // to load a predefined calibration for your camera.
-                    .setLensIntrinsics(fx, fy, cx, cy)
+                    //.setLensIntrinsics(fx, fy, cx, cy)
                     // ... these parameters are fx, fy, cx, cy.
 
                     .build();
