@@ -3,9 +3,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -25,9 +23,8 @@ import java.util.concurrent.TimeUnit;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Autonomous(name = "TensorFlowRedFront", group = "Concept", preselectTeleOp = "Payload_TeleOp")
-
-public class TensorFlowObjectDetection extends LinearOpMode {
+@Autonomous(name = "Auton_RED_FRONT", group = "Concept", preselectTeleOp = "Payload_TeleOp")
+public class Auton_RED_FRONT extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -155,74 +152,67 @@ public class TensorFlowObjectDetection extends LinearOpMode {
                         telemetry.addLine("Center " + CENTER);
                         telemetry.update();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1000);
+                        TimeUnit.MILLISECONDS.sleep(800);
                         Idle();
                         step++;
                         placed = true;
+                        //now move back to X
+                        moveBackward(0.5);
+                        TimeUnit.MILLISECONDS.sleep(300);
+                        Idle();
+                        turnRight(0.5);
+                        TimeUnit.MILLISECONDS.sleep(900);
+                        Idle();
+                        moveForward(0.5);
+                        TimeUnit.MILLISECONDS.sleep(500);
+                        Idle();
                     } else if (RIGHT) {
                         telemetry.addLine("Right " + RIGHT);
                         telemetry.update();
-                        TimeUnit.MILLISECONDS.sleep(550);
                         turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(250);
+                        TimeUnit.MILLISECONDS.sleep(300);
                         Idle();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(850);
-                        Idle();
+                        TimeUnit.MILLISECONDS.sleep(800);
                         step++;
                         placed = true;
+                        //move back to x
+                        moveBackward(0.5);
+                        TimeUnit.MILLISECONDS.sleep(300);
+                        Idle();
+                        turnRight(0.5);
+                        TimeUnit.MILLISECONDS.sleep(700);
+                        Idle();
+                        moveForward(0.5);
+                        TimeUnit.MILLISECONDS.sleep(500);
+                        Idle();
                     } else if (LEFT) {
                         telemetry.addLine("Left " + LEFT);
                         telemetry.update();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(250);
+                        TimeUnit.MILLISECONDS.sleep(150);
                         Idle();
                         TimeUnit.MILLISECONDS.sleep(550);
                         turnLeft(0.5);
                         TimeUnit.MILLISECONDS.sleep(450);
                         Idle();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(340);
-                        Idle();
+                        TimeUnit.MILLISECONDS.sleep(500);
                         step++;
                         placed = true;
-                    }
-                } else {
-                    Idle();
-                }
-                if (placed && !exe){
-                    if (CENTER && !exe) {
+                        //move back to x
                         moveBackward(0.5);
                         TimeUnit.MILLISECONDS.sleep(300);
                         Idle();
-                        exe = true;
-                    }
-                    if (RIGHT && !exe) {
-                        moveBackward(0.5);
+                        turnRight(0.5);
+                        TimeUnit.MILLISECONDS.sleep(1300);
+                        Idle();
+                        moveForward(0.5);
                         TimeUnit.MILLISECONDS.sleep(500);
                         Idle();
-                        turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(730);
-                        Idle();
-                        strafeRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(200);
-                        Idle();
-                        step++;
-                        exe = true;
                     }
-                    if (LEFT && !exe){
-                        moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(500);
-                        Idle();
-                        turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1200);
-                        Idle();
-                        strafeLeft(0.5);
-                        TimeUnit.MILLISECONDS.sleep(200);
-                        Idle();
-                        step++;
-                        exe = true;
-                    }
+                } else {
+                    Idle();
                 }
                 //Share the CPU.
                 sleep(20);
@@ -235,7 +225,7 @@ public class TensorFlowObjectDetection extends LinearOpMode {
     }   // end runOpMode()
 
     /**
-     * Initialize the TensorFlow Object Detection processor.
+     * Initialize the TensorFlow Object Detection processor
      */
     private void initTfod() {
 
@@ -312,7 +302,7 @@ public class TensorFlowObjectDetection extends LinearOpMode {
             double y = (recognition.getTop() + recognition.getBottom()) / 2;
             Seen = true;
             telemetry.addData("", " ");
-            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+            telemetry.addData("Image ", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
             if (x <= 300) {
