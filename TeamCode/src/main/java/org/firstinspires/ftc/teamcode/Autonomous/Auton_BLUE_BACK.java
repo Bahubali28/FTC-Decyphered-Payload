@@ -148,24 +148,21 @@ public class Auton_BLUE_BACK extends LinearOpMode {
                         telemetry.addLine("Center " + CENTER);
                         telemetry.update();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(800);
+                        TimeUnit.MILLISECONDS.sleep(900);
                         Idle();
                         step++;
                         placed = true;
                         //now move back to X
                         moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(250);
+                        TimeUnit.MILLISECONDS.sleep(300);
                         Idle();
-                        turnLeft(0.5);
-                        TimeUnit.MILLISECONDS.sleep(850);
+                        turnRight(0.5);
+                        TimeUnit.MILLISECONDS.sleep(1000);
                         Idle();
-                        moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(2200);
-                        Idle();
-                    } else if (LEFT) {
+                    } else if (RIGHT) {
                         telemetry.addLine("Right " + RIGHT);
                         telemetry.update();
-                        turnLeft(0.5);
+                        turnRight(0.5);
                         TimeUnit.MILLISECONDS.sleep(300);
                         Idle();
                         moveForward(0.5);
@@ -174,22 +171,16 @@ public class Auton_BLUE_BACK extends LinearOpMode {
                         placed = true;
                         //move back to x
                         moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(250);
+                        TimeUnit.MILLISECONDS.sleep(300);
                         Idle();
-                        turnLeft(0.5);
-                        TimeUnit.MILLISECONDS.sleep(650);
-                        Idle();
-                        moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(2500);
-                        Idle();
-                    } else if (RIGHT) {
+                    } else if (LEFT) {
                         telemetry.addLine("Left " + LEFT);
                         telemetry.update();
                         moveForward(0.5);
                         TimeUnit.MILLISECONDS.sleep(150);
                         Idle();
                         TimeUnit.MILLISECONDS.sleep(550);
-                        turnRight(0.5);
+                        turnLeft(0.5);
                         TimeUnit.MILLISECONDS.sleep(450);
                         Idle();
                         moveForward(0.5);
@@ -198,13 +189,7 @@ public class Auton_BLUE_BACK extends LinearOpMode {
                         placed = true;
                         //move back to x
                         moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(450);
-                        Idle();
-                        turnLeft(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1300);
-                        Idle();
-                        moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(2500);
+                        TimeUnit.MILLISECONDS.sleep(400);
                         Idle();
                     }
                 } else {
@@ -277,7 +262,7 @@ public class Auton_BLUE_BACK extends LinearOpMode {
         visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.55f);
+        tfod.setMinResultConfidence(0.73f);
 
         // Disable or re-enable the TFOD processor at any time.
         visionPortal.setProcessorEnabled(tfod, true);

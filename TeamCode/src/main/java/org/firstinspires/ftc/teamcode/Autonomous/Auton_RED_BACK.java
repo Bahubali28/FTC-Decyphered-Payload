@@ -153,7 +153,7 @@ public class Auton_RED_BACK extends LinearOpMode {
                         telemetry.addLine("Center " + CENTER);
                         telemetry.update();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(800);
+                        TimeUnit.MILLISECONDS.sleep(1000);
                         Idle();
                         step++;
                         placed = true;
@@ -161,63 +161,39 @@ public class Auton_RED_BACK extends LinearOpMode {
                         moveBackward(0.5);
                         TimeUnit.MILLISECONDS.sleep(300);
                         Idle();
-                        turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(850);
-                        Idle();
-                        moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(2500);
-                        Idle();
-                        //visionPortal.close
-                        //   Auton_Test autonTest = new Auton_Test();
-                        //   autonTest.runOpModeCustom(hardwareMap, telemetry, this);
-                    } else if (RIGHT) {
+                    } else if (LEFT) {
                         telemetry.addLine("Right " + RIGHT);
                         telemetry.update();
-                        turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(300);
+                        turnLeft(0.5);
+                        TimeUnit.MILLISECONDS.sleep(400);
                         Idle();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(800);
+                        TimeUnit.MILLISECONDS.sleep(1000);
                         step++;
                         placed = true;
                         //move back to x
                         moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(300);
+                        TimeUnit.MILLISECONDS.sleep(400);
                         Idle();
-                        turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(600);
-                        Idle();
-                        moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(2500);
-                        Idle();
-                        visionPortal.close();
-                    } else if (LEFT) {
+                    } else if (RIGHT) {
                         telemetry.addLine("Left " + LEFT);
                         telemetry.update();
                         moveForward(0.5);
                         TimeUnit.MILLISECONDS.sleep(150);
                         Idle();
                         TimeUnit.MILLISECONDS.sleep(550);
-                        turnLeft(0.5);
-                        TimeUnit.MILLISECONDS.sleep(450);
+                        turnRight(0.5);
+                        TimeUnit.MILLISECONDS.sleep(550);
                         Idle();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(500);
+                        TimeUnit.MILLISECONDS.sleep(600);
                         step++;
                         placed = true;
                         //move back to x
                         moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(300);
+                        TimeUnit.MILLISECONDS.sleep(550);
                         Idle();
-                        turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1300);
-                        Idle();
-                        moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(2500);
-                        Idle();
-                        visionPortal.close();
                     }
-                    //call step-2
                 } else {
                     Idle();
                 }
@@ -288,7 +264,7 @@ public class Auton_RED_BACK extends LinearOpMode {
         visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.55f);
+        tfod.setMinResultConfidence(0.73f);
 
         // Disable or re-enable the TFOD processor at any time.
         visionPortal.setProcessorEnabled(tfod, true);
