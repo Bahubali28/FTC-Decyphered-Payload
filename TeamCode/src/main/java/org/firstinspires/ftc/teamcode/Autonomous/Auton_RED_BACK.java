@@ -218,7 +218,6 @@ public class Auton_RED_BACK extends LinearOpMode {
                         visionPortal.close();
                     }
                     //call step-2
-
                 } else {
                     Idle();
                 }
