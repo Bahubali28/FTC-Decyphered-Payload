@@ -156,9 +156,6 @@ public class Auton_BLUE_BACK extends LinearOpMode {
                         moveBackward(0.5);
                         TimeUnit.MILLISECONDS.sleep(300);
                         Idle();
-                        turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1000);
-                        Idle();
                     } else if (RIGHT) {
                         telemetry.addLine("Right " + RIGHT);
                         telemetry.update();

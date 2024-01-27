@@ -39,8 +39,8 @@ public class Payload_TeleOp extends LinearOpMode {
         serIn4.setDirection(Servo.Direction.FORWARD);
         serAc1.setPosition(0.97);
         serAc2.setPosition(0.97);
-        serIn4.setPosition(0.1);
-        serIn5.setPosition(0.1);
+        serIn4.setPosition(0);
+        serIn5.setPosition(0);
         serAir.setPosition(60);
         telemetry.addLine("Motors Assigned and Attached");
         telemetry.addLine("SerAc1 Pos: " + serAc1.getPosition());

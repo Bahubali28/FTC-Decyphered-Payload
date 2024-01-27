@@ -443,7 +443,7 @@ public abstract class Autonomous_RED_FRONT extends LinearOpMode {
 //        telemetryTfod();
 
 }   // end class
-
+@Disabled
 abstract class Backdrop extends LinearOpMode{
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
