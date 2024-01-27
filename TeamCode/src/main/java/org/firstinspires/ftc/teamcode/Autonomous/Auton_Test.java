@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -28,9 +27,8 @@ import java.util.concurrent.TimeUnit;
 @Autonomous(name = "Autonomous_Test", group = "Auton_Test", preselectTeleOp = "Payload_TeleOp")
 public class Auton_Test extends LinearOpMode
 {
-    OpenCvCamera camera;
-    AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
+    AprilTagDetectionPipeline aprilTagDetectionPipeline;
     static final double FEET_PER_METER = 3.28084;
 
     // Lens intrinsics
@@ -47,6 +45,8 @@ public class Auton_Test extends LinearOpMode
 
     int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
     int CENTER = 5;
+    int RIGHT = 6;
+    int LEFT = 4;
     AprilTagDetection tagOfInterest = null;
     boolean dontre;
     boolean desYaw;
@@ -108,7 +108,8 @@ public class Auton_Test extends LinearOpMode
     public void runOpMode() throws InterruptedException {
     }
 
-    public void runOpModeCustom(HardwareMap hardwareMap, Telemetry telemetry) throws InterruptedException {
+    public void runOpModeCustom(HardwareMap hardwareMap, Telemetry telemetry, Auton_RED_BACK autonRedBack) throws InterruptedException {
+        OpenCvCamera camera;
         telemetry.addLine("Initializing...");
         telemetry.update();
         fl = hardwareMap.get(DcMotor.class, "fl");
@@ -128,6 +129,10 @@ public class Auton_Test extends LinearOpMode
         serIn4.setDirection(Servo.Direction.FORWARD);
         serIn4.setPosition(0);
         serIn5.setPosition(0);
+
+
+//        turnLeft(0.5);
+//        TimeUnit.MILLISECONDS.sleep(1000);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -162,10 +167,16 @@ public class Auton_Test extends LinearOpMode
         telemetry.addLine("Everything Works");
         telemetry.addLine("Ready to Start Autonomous");
         telemetry.update();
-        waitForStart();
+ //       waitForStart();
 
-        while (opModeIsActive()) {
+        while(opModeIsActive()) {
+
+//            turnLeft(0.5);
+//            TimeUnit.MILLISECONDS.sleep(1000);
+
             if (step == 1) {
+                telemetry.addLine("Opmode is currently active");
+                telemetry.update();
 //                try{
 //	    /*
 //	    1. Move forward to the second bar
@@ -188,7 +199,7 @@ public class Auton_Test extends LinearOpMode
 //                } catch(InterruptedException e){
 ////                    TODO: handle exception
 //                }
-//                step++;
+                step++;
             }
             telemetry.addLine("Moving to the April Tag...");
             telemetry.update();
@@ -199,7 +210,7 @@ public class Auton_Test extends LinearOpMode
 
                 for(AprilTagDetection tag : currentDetections)
                 {
-                    if(tag.id == CENTER)
+                    if(tag.id == CENTER || tag.id == RIGHT || tag.id == LEFT)
                     {
                         tagOfInterest = tag;
                         tagFound = true;
@@ -217,10 +228,11 @@ public class Auton_Test extends LinearOpMode
                     do {
                         if (step == 2 &&!desYaw && opModeIsActive()) {
                             telemetry.addData("step: ", step);
+        //                    telemetry.addData("Tag found: ", tagOfInterest.id);
                             telemetry.update();
-                            if (rot.firstAngle < -3) {
+                            if (rot.firstAngle < -2) {
                                 turnLeft(0.2);
-                            } else if (rot.firstAngle > 3) {
+                            } else if (rot.firstAngle > 2) {
                                 turnRight(0.2);
                             } else {
                                 Idle();
@@ -234,11 +246,11 @@ public class Auton_Test extends LinearOpMode
                             telemetry.addData("step: ", step);
                             telemetry.update();
                             if(tagOfInterest.pose.x < -deadzone) {
-                                strafeLeft(0.4);
+                                strafeLeft(0.2);
                             }
                             else if(tagOfInterest.pose.x > deadzone) {
                                 // do something else
-                                strafeRight(0.4);
+                                strafeRight(0.2);
                             } else {
                                 Idle();
                                 desX = true;
@@ -250,9 +262,9 @@ public class Auton_Test extends LinearOpMode
                         if (step == 4 && !checkYaw && opModeIsActive()) {
                             telemetry.addData("step: ", step);
                             telemetry.update();
-                            if (rot.firstAngle < -5) {
+                            if (rot.firstAngle < -1) {
                                 turnLeft(0.25);
-                            } else if (rot.firstAngle > 5) {
+                            } else if (rot.firstAngle > 1) {
                                 turnRight(0.25);
                             } else {
                                 Idle();

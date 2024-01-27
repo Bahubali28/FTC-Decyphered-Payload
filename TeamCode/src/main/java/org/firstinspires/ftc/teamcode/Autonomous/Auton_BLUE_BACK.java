@@ -154,13 +154,13 @@ public class Auton_BLUE_BACK extends LinearOpMode {
                         placed = true;
                         //now move back to X
                         moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(300);
+                        TimeUnit.MILLISECONDS.sleep(250);
                         Idle();
                         turnLeft(0.5);
-                        TimeUnit.MILLISECONDS.sleep(900);
+                        TimeUnit.MILLISECONDS.sleep(875);
                         Idle();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(2500);
+                        TimeUnit.MILLISECONDS.sleep(2200);
                         Idle();
                     } else if (LEFT) {
                         telemetry.addLine("Right " + RIGHT);
@@ -174,10 +174,10 @@ public class Auton_BLUE_BACK extends LinearOpMode {
                         placed = true;
                         //move back to x
                         moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(300);
+                        TimeUnit.MILLISECONDS.sleep(250);
                         Idle();
                         turnLeft(0.5);
-                        TimeUnit.MILLISECONDS.sleep(700);
+                        TimeUnit.MILLISECONDS.sleep(650);
                         Idle();
                         moveForward(0.5);
                         TimeUnit.MILLISECONDS.sleep(2500);
