@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
+package org.firstinspires.ftc.teamcode.NotImportant;
 
 import android.util.Size;
 
@@ -9,12 +9,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorBNO055IMU;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
+import java.sql.Time;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -25,15 +27,15 @@ import java.util.concurrent.TimeUnit;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Autonomous(name = "TensorFlowRedBack", group = "Concept", preselectTeleOp = "Payload_TeleOp")
+@Autonomous(name = "TensorFlowBlueBack", group = "Concept", preselectTeleOp = "Payload_TeleOp")
 @Disabled
-public class TensorFlowRedBack extends LinearOpMode {
+public class TensorFlowBlueBack extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
-    private static final String TFOD_MODEL_ASSET = "RedTeamProp.tflite";
+    private static final String TFOD_MODEL_ASSET = "BlueTeamProp.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
 //    private static final String TFO
@@ -162,31 +164,27 @@ public class TensorFlowRedBack extends LinearOpMode {
                     } else if (RIGHT) {
                         telemetry.addLine("Right " + RIGHT);
                         telemetry.update();
-                        moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(250);
-                        Idle();
                         TimeUnit.MILLISECONDS.sleep(550);
                         turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(450);
+                        TimeUnit.MILLISECONDS.sleep(250);
                         Idle();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(340);
+                        TimeUnit.MILLISECONDS.sleep(850);
                         Idle();
                         step++;
                         placed = true;
                     } else if (LEFT) {
-                        telemetry.addLine("Left" + LEFT);
+                        telemetry.addLine("Left " + LEFT);
                         telemetry.update();
-                        TimeUnit.MILLISECONDS.sleep(700);
-                        turnLeft(0.5);
+                        moveForward(0.5);
                         TimeUnit.MILLISECONDS.sleep(250);
                         Idle();
+                        TimeUnit.MILLISECONDS.sleep(550);
+                        turnLeft(0.5);
+                        TimeUnit.MILLISECONDS.sleep(450);
+                        Idle();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1000);
-                        Idle();
-                        moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(200);
-                        Idle();
+                        TimeUnit.MILLISECONDS.sleep(430);
                         step++;
                         placed = true;
                     }
@@ -203,8 +201,12 @@ public class TensorFlowRedBack extends LinearOpMode {
                     if (RIGHT && !exe) {
                         moveBackward(0.5);
                         TimeUnit.MILLISECONDS.sleep(500);
+                        exe = true;
+                    }
+                    if (LEFT && !exe) {
+                        moveBackward(0.5);
+                        TimeUnit.MILLISECONDS.sleep(400);
                         Idle();
-                        step++;
                         exe = true;
                     }
                 }
@@ -275,7 +277,7 @@ public class TensorFlowRedBack extends LinearOpMode {
         visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.75f);
+        tfod.setMinResultConfidence(0.55f);
 
         // Disable or re-enable the TFOD processor at any time.
         visionPortal.setProcessorEnabled(tfod, true);

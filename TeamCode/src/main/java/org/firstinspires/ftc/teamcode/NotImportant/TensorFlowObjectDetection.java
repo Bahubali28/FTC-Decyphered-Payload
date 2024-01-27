@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
+package org.firstinspires.ftc.teamcode.NotImportant;
 
 import android.util.Size;
 
@@ -9,14 +9,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.SensorBNO055IMU;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
-import java.sql.Time;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -27,15 +25,16 @@ import java.util.concurrent.TimeUnit;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Autonomous(name = "TensorFlowBlueBack", group = "Concept", preselectTeleOp = "Payload_TeleOp")
 @Disabled
-public class TensorFlowBlueBack extends LinearOpMode {
+@Autonomous(name = "TensorFlowRedFront", group = "Concept", preselectTeleOp = "Payload_TeleOp")
+
+public class TensorFlowObjectDetection extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
     // this is only used for Android Studio when using models in Assets.
-    private static final String TFOD_MODEL_ASSET = "BlueTeamProp.tflite";
+    private static final String TFOD_MODEL_ASSET = "RedTeamProp.tflite";
     // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
     // this is used when uploading models directly to the RC using the model upload interface.
 //    private static final String TFO
@@ -132,7 +131,7 @@ public class TensorFlowBlueBack extends LinearOpMode {
                 telemetryTfod();
                 if (step == 1) {
                     moveForward(0.5);
-                    TimeUnit.MILLISECONDS.sleep(95);
+                    TimeUnit.MILLISECONDS.sleep(120);
                     Idle();
                     TimeUnit.MILLISECONDS.sleep(100);
                     step++;
@@ -184,7 +183,8 @@ public class TensorFlowBlueBack extends LinearOpMode {
                         TimeUnit.MILLISECONDS.sleep(450);
                         Idle();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(430);
+                        TimeUnit.MILLISECONDS.sleep(340);
+                        Idle();
                         step++;
                         placed = true;
                     }
@@ -201,12 +201,27 @@ public class TensorFlowBlueBack extends LinearOpMode {
                     if (RIGHT && !exe) {
                         moveBackward(0.5);
                         TimeUnit.MILLISECONDS.sleep(500);
+                        Idle();
+                        turnRight(0.5);
+                        TimeUnit.MILLISECONDS.sleep(730);
+                        Idle();
+                        strafeRight(0.5);
+                        TimeUnit.MILLISECONDS.sleep(200);
+                        Idle();
+                        step++;
                         exe = true;
                     }
-                    if (LEFT && !exe) {
+                    if (LEFT && !exe){
                         moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(400);
+                        TimeUnit.MILLISECONDS.sleep(500);
                         Idle();
+                        turnRight(0.5);
+                        TimeUnit.MILLISECONDS.sleep(1200);
+                        Idle();
+                        strafeLeft(0.5);
+                        TimeUnit.MILLISECONDS.sleep(200);
+                        Idle();
+                        step++;
                         exe = true;
                     }
                 }

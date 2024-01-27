@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -23,10 +24,9 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-
-@Autonomous(name = "Autonomous_Test", group = "Auton_Test", preselectTeleOp = "Payload_TeleOp")
-public class Auton_Test extends LinearOpMode
-{
+@Disabled
+@Autonomous(name = "Autonomous_Test", group = "Detect AprilTag", preselectTeleOp = "Payload_TeleOp")
+public class Auton_Test extends LinearOpMode {
 
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
     static final double FEET_PER_METER = 3.28084;
@@ -107,7 +107,6 @@ public class Auton_Test extends LinearOpMode
     @Override
     public void runOpMode() throws InterruptedException {
     }
-
     public void runOpModeCustom(HardwareMap hardwareMap, Telemetry telemetry, Auton_RED_BACK autonRedBack) throws InterruptedException {
         OpenCvCamera camera;
         telemetry.addLine("Initializing...");

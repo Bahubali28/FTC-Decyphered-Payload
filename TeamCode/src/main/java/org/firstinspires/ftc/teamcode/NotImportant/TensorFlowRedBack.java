@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Autonomous;
+package org.firstinspires.ftc.teamcode.NotImportant;
 
 import android.util.Size;
 
@@ -25,9 +25,9 @@ import java.util.concurrent.TimeUnit;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Autonomous(name = "TensorFlowRedFront", group = "Concept", preselectTeleOp = "Payload_TeleOp")
-
-public class TensorFlowObjectDetection extends LinearOpMode {
+@Autonomous(name = "TensorFlowRedBack", group = "Concept", preselectTeleOp = "Payload_TeleOp")
+@Disabled
+public class TensorFlowRedBack extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -130,7 +130,7 @@ public class TensorFlowObjectDetection extends LinearOpMode {
                 telemetryTfod();
                 if (step == 1) {
                     moveForward(0.5);
-                    TimeUnit.MILLISECONDS.sleep(120);
+                    TimeUnit.MILLISECONDS.sleep(95);
                     Idle();
                     TimeUnit.MILLISECONDS.sleep(100);
                     step++;
@@ -162,27 +162,30 @@ public class TensorFlowObjectDetection extends LinearOpMode {
                     } else if (RIGHT) {
                         telemetry.addLine("Right " + RIGHT);
                         telemetry.update();
+                        moveForward(0.5);
+                        TimeUnit.MILLISECONDS.sleep(250);
+                        Idle();
                         TimeUnit.MILLISECONDS.sleep(550);
                         turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(250);
-                        Idle();
-                        moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(850);
-                        Idle();
-                        step++;
-                        placed = true;
-                    } else if (LEFT) {
-                        telemetry.addLine("Left " + LEFT);
-                        telemetry.update();
-                        moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(250);
-                        Idle();
-                        TimeUnit.MILLISECONDS.sleep(550);
-                        turnLeft(0.5);
                         TimeUnit.MILLISECONDS.sleep(450);
                         Idle();
                         moveForward(0.5);
                         TimeUnit.MILLISECONDS.sleep(340);
+                        Idle();
+                        step++;
+                        placed = true;
+                    } else if (LEFT) {
+                        telemetry.addLine("Left" + LEFT);
+                        telemetry.update();
+                        TimeUnit.MILLISECONDS.sleep(700);
+                        turnLeft(0.5);
+                        TimeUnit.MILLISECONDS.sleep(250);
+                        Idle();
+                        moveForward(0.5);
+                        TimeUnit.MILLISECONDS.sleep(1000);
+                        Idle();
+                        moveBackward(0.5);
+                        TimeUnit.MILLISECONDS.sleep(200);
                         Idle();
                         step++;
                         placed = true;
@@ -200,25 +203,6 @@ public class TensorFlowObjectDetection extends LinearOpMode {
                     if (RIGHT && !exe) {
                         moveBackward(0.5);
                         TimeUnit.MILLISECONDS.sleep(500);
-                        Idle();
-                        turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(730);
-                        Idle();
-                        strafeRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(200);
-                        Idle();
-                        step++;
-                        exe = true;
-                    }
-                    if (LEFT && !exe){
-                        moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(500);
-                        Idle();
-                        turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1200);
-                        Idle();
-                        strafeLeft(0.5);
-                        TimeUnit.MILLISECONDS.sleep(200);
                         Idle();
                         step++;
                         exe = true;
@@ -291,7 +275,7 @@ public class TensorFlowObjectDetection extends LinearOpMode {
         visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.55f);
+        tfod.setMinResultConfidence(0.75f);
 
         // Disable or re-enable the TFOD processor at any time.
         visionPortal.setProcessorEnabled(tfod, true);

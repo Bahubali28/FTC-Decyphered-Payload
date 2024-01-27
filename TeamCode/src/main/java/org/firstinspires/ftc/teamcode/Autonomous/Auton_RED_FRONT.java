@@ -4,8 +4,10 @@ import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -23,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Autonomous(name = "Auton_RED_FRONT", group = "Concept", preselectTeleOp = "Payload_TeleOp")
+@Autonomous(name = "Auton_RED_FRONT", group = "Autonomous", preselectTeleOp = "Payload_TeleOp")
 public class Auton_RED_FRONT extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -54,6 +56,8 @@ public class Auton_RED_FRONT extends LinearOpMode {
      */
     private VisionPortal visionPortal;
     private DcMotor fl, fr, bl, br;
+    private Servo serIn4, serIn5;
+    private CRServo serIn1, serIn2;
     public void moveForward(double power) {
         fl.setPower(-power);
         fr.setPower(-power);
@@ -96,6 +100,10 @@ public class Auton_RED_FRONT extends LinearOpMode {
         bl.setPower(0);
         br.setPower(0);
     }
+    public void PlacePixel() {
+        serIn4.setPosition(0.65);
+        serIn5.setPosition(0.65);
+    }
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -103,9 +111,19 @@ public class Auton_RED_FRONT extends LinearOpMode {
         fr = hardwareMap.get(DcMotor.class, "fr");
         bl = hardwareMap.get(DcMotor.class, "bl");
         br = hardwareMap.get(DcMotor.class, "br");
+        serIn1 = hardwareMap.get(CRServo.class, "serIn1");
+        serIn2 = hardwareMap.get(CRServo.class, "serIn2");
+        serIn4 = hardwareMap.get(Servo.class, "serIn4");
+        serIn5 = hardwareMap.get(Servo.class, "serIn5");
 
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
+        serIn1.setDirection(CRServo.Direction.REVERSE);
+        serIn2.setDirection(CRServo.Direction.FORWARD);
+        serIn5.setDirection(Servo.Direction.REVERSE);
+        serIn4.setDirection(Servo.Direction.FORWARD);
+        serIn5.setPosition(0);
+        serIn4.setPosition(0);
         initTfod();
         Seen = false;
         CENTER = false;
@@ -152,7 +170,7 @@ public class Auton_RED_FRONT extends LinearOpMode {
                         telemetry.addLine("Center " + CENTER);
                         telemetry.update();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(800);
+                        TimeUnit.MILLISECONDS.sleep(900);
                         Idle();
                         step++;
                         placed = true;
@@ -161,11 +179,18 @@ public class Auton_RED_FRONT extends LinearOpMode {
                         TimeUnit.MILLISECONDS.sleep(300);
                         Idle();
                         turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(900);
+                        TimeUnit.MILLISECONDS.sleep(1000);
                         Idle();
+                        PlacePixel();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(500);
+                        TimeUnit.MILLISECONDS.sleep(1450);
                         Idle();
+                        TimeUnit.SECONDS.sleep(3);
+                        serIn1.setPower(0.5);
+                        serIn2.setPower(0.5);
+                        TimeUnit.MILLISECONDS.sleep(1000);
+                        serIn1.setPower(0);
+                        serIn2.setPower(0);
                     } else if (RIGHT) {
                         telemetry.addLine("Right " + RIGHT);
                         telemetry.update();
@@ -181,11 +206,18 @@ public class Auton_RED_FRONT extends LinearOpMode {
                         TimeUnit.MILLISECONDS.sleep(300);
                         Idle();
                         turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(700);
+                        TimeUnit.MILLISECONDS.sleep(670);
                         Idle();
+                        PlacePixel();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(500);
+                        TimeUnit.MILLISECONDS.sleep(1200);
                         Idle();
+                        TimeUnit.SECONDS.sleep(3);
+                        serIn1.setPower(0.5);
+                        serIn2.setPower(0.5);
+                        TimeUnit.MILLISECONDS.sleep(1000);
+                        serIn1.setPower(0);
+                        serIn2.setPower(0);
                     } else if (LEFT) {
                         telemetry.addLine("Left " + LEFT);
                         telemetry.update();
@@ -202,14 +234,21 @@ public class Auton_RED_FRONT extends LinearOpMode {
                         placed = true;
                         //move back to x
                         moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(300);
+                        TimeUnit.MILLISECONDS.sleep(400);
                         Idle();
                         turnRight(0.5);
                         TimeUnit.MILLISECONDS.sleep(1300);
                         Idle();
+                        PlacePixel();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(500);
+                        TimeUnit.MILLISECONDS.sleep(1450);
                         Idle();
+                        TimeUnit.SECONDS.sleep(3);
+                        serIn1.setPower(0.5);
+                        serIn2.setPower(0.5);
+                        TimeUnit.MILLISECONDS.sleep(1000);
+                        serIn1.setPower(0);
+                        serIn2.setPower(0);
                     }
                 } else {
                     Idle();
@@ -281,7 +320,7 @@ public class Auton_RED_FRONT extends LinearOpMode {
         visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.55f);
+        tfod.setMinResultConfidence(0.73f);
 
         // Disable or re-enable the TFOD processor at any time.
         visionPortal.setProcessorEnabled(tfod, true);
