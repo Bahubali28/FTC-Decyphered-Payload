@@ -157,7 +157,7 @@ public class Auton_BLUE_BACK extends LinearOpMode {
                         TimeUnit.MILLISECONDS.sleep(250);
                         Idle();
                         turnLeft(0.5);
-                        TimeUnit.MILLISECONDS.sleep(875);
+                        TimeUnit.MILLISECONDS.sleep(850);
                         Idle();
                         moveForward(0.5);
                         TimeUnit.MILLISECONDS.sleep(2200);
