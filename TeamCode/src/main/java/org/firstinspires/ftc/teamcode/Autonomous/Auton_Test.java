@@ -24,7 +24,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-@Disabled
+
 @Autonomous(name = "Autonomous_Test", group = "Detect AprilTag", preselectTeleOp = "Payload_TeleOp")
 public class Auton_Test extends LinearOpMode {
 
@@ -104,13 +104,46 @@ public class Auton_Test extends LinearOpMode {
         bl.setPower(0);
         br.setPower(0);
     }
+    public void AprilTagInit(String CameraName) {
+        OpenCvCamera camera;
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, CameraName), cameraMonitorViewId);
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        camera.setPipeline(aprilTagDetectionPipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+
+            }
+        });
+
+        telemetry.setMsTransmissionInterval(50);
+    }
+    public void moveToAprilTag(double power) {
+        dontre = false;
+        desYaw = false;
+        checkYaw = false;
+        desX = false;
+        checkYaw2 = false;
+        desZ = false;
+        parkNeeded = true;
+        step = 1;
+    }
     @Override
     public void runOpMode() throws InterruptedException {
     }
     public void runOpModeCustom(HardwareMap hardwareMap, Telemetry telemetry, Auton_RED_BACK autonRedBack) throws InterruptedException {
-        OpenCvCamera camera;
         telemetry.addLine("Initializing...");
         telemetry.update();
+        //hardwareMap.
         fl = hardwareMap.get(DcMotor.class, "fl");
         br = hardwareMap.get(DcMotor.class, "br");
         fr = hardwareMap.get(DcMotor.class, "fr");
@@ -133,34 +166,7 @@ public class Auton_Test extends LinearOpMode {
 //        turnLeft(0.5);
 //        TimeUnit.MILLISECONDS.sleep(1000);
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-        camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
-            }
 
-            @Override
-            public void onError(int errorCode)
-            {
-
-            }
-        });
-
-        telemetry.setMsTransmissionInterval(50);
-        dontre = false;
-        desYaw = false;
-        checkYaw = false;
-        desX = false;
-        checkYaw2 = false;
-        desZ = false;
-        parkNeeded = true;
-        step = 1;
         telemetry.addLine("Autonomous_RED_BACK Initialized...");
         telemetry.update();
         telemetry.addLine("Everything Works");

@@ -192,6 +192,8 @@ public class Auton_Merging extends LinearOpMode {
                         TimeUnit.MILLISECONDS.sleep(1000);
                         serIn1.setPower(0);
                         serIn2.setPower(0);
+                        visionPortal.close();
+                        AprilTagClass.initAprilTag("Webcam 1");
                     } else if (RIGHT) {
                         telemetry.addLine("Right " + RIGHT);
                         telemetry.update();
@@ -219,6 +221,8 @@ public class Auton_Merging extends LinearOpMode {
                         TimeUnit.MILLISECONDS.sleep(1000);
                         serIn1.setPower(0);
                         serIn2.setPower(0);
+                        visionPortal.close();
+                        AprilTagClass.initAprilTag("Webcam 1");
                     } else if (LEFT) {
                         telemetry.addLine("Left " + LEFT);
                         telemetry.update();
@@ -250,9 +254,14 @@ public class Auton_Merging extends LinearOpMode {
                         TimeUnit.MILLISECONDS.sleep(1000);
                         serIn1.setPower(0);
                         serIn2.setPower(0);
+                        visionPortal.close();
+                        AprilTagClass.initAprilTag("Webcam 1");
                     }
                 } else {
                     Idle();
+                }
+                while (placed && opModeIsActive()) {
+                    AprilTagClass.moveToAprilTag(opModeIsActive());
                 }
                 //Share the CPU.
                 sleep(20);
