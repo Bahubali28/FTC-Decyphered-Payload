@@ -34,14 +34,14 @@ public class Payload_TeleOp extends LinearOpMode {
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
         serAc2.setDirection(Servo.Direction.REVERSE);
-        serAir.setDirection(Servo.Direction.REVERSE);
+        serAir.setDirection(Servo.Direction.FORWARD);
         serIn5.setDirection(Servo.Direction.REVERSE);
         serIn4.setDirection(Servo.Direction.FORWARD);
         serAc1.setPosition(0.97);
         serAc2.setPosition(0.97);
         serIn4.setPosition(0.06);
         serIn5.setPosition(0.06);
-        serAir.setPosition(60);
+        serAir.setPosition(0.1);
         telemetry.addLine("Motors Assigned and Attached");
         telemetry.addLine("SerAc1 Pos: " + serAc1.getPosition());
         telemetry.addLine("SerAc2 Pos: " + serAc2.getPosition());
@@ -147,10 +147,13 @@ public class Payload_TeleOp extends LinearOpMode {
                 telemetry.update();
             }
             if (gamepad2.x == true) {
-                serAir.setPosition(0);
+                serAc2.setPosition(0.8);
+                TimeUnit.MILLISECONDS.sleep(1000);
+                serAir.setPosition(1);
             }
             if (gamepad2.b == true) {
-                serAir.setPosition(60);
+                serAc2.setPosition(0.97);
+                serAir.setPosition(0.1);
             }
             if (gamepad2.back == true) {
                 serIn4.setPosition(0.06);
