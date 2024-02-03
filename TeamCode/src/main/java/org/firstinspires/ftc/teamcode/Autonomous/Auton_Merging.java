@@ -11,22 +11,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;+
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import org.openftc.apriltag.AprilTagPose;
 
 /*
  * This OpMode illustrates the basics of TensorFlow Object Detection,
@@ -35,7 +25,7 @@ import org.openftc.apriltag.AprilTagPose;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@Autonomous(name = "Auton_Merging", group = "Autonomous", preselectTeleOp = "Payload_TeleOp")
+@Autonomous(name = "Auton_RED_FRONT", group = "Autonomous", preselectTeleOp = "Payload_TeleOp")
 public class Auton_Merging extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -55,8 +45,6 @@ public class Auton_Merging extends LinearOpMode {
     boolean RIGHT;
     boolean CENTER;
     boolean Seen;
-    org.openftc.apriltag.AprilTagDetection tagOfInterest = null;
-    int step2 = 2;
 
     /**
      * The variable to store our instance of the TensorFlow Object Detection processor.
@@ -70,10 +58,6 @@ public class Auton_Merging extends LinearOpMode {
     private DcMotor fl, fr, bl, br;
     private Servo serIn4, serIn5;
     private CRServo serIn1, serIn2;
-    OpenCvCamera camera;
-    AprilTagDetectionPipeline aprilTagDetectionPipeline;
-
-    public final double FEET_PER_METER = 3.28084;
     public void moveForward(double power) {
         fl.setPower(-power);
         fr.setPower(-power);
@@ -376,258 +360,6 @@ public class Auton_Merging extends LinearOpMode {
             Seen = true;
         }   // end for() loop
 
-    }
-    public void initAprilTag (String webcamName) {
-
-        // Lens intrinsics
-        // UNITS ARE PIXELS
-        // NOTE: this calibration is for the C920 webcam at 800x448.
-        // You will need to do your own calibration for other configurations!
-        double fx = 578.272;
-        double fy = 578.272;
-        double cx = 402.145;
-        double cy = 221.506;
-
-        // UNITS ARE METERS
-        double tagsize = 0.166;
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, webcamName), cameraMonitorViewId);
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-        camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-
-            }
-        });
-
-        telemetry.setMsTransmissionInterval(50);
-    }
-    private void startAprilTagMovement() throws InterruptedException{
-        telemetry.addLine("Moving to the April Tag...");
-        telemetry.update();
-        ArrayList<org.openftc.apriltag.AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
-        if (currentDetections.size() != 0 && opModeIsActive())
-        {
-            boolean tagFound = false;
-
-            for(org.openftc.apriltag.AprilTagDetection tag : currentDetections)
-            {
-                if(tag.id == 5)
-                {
-                    tagOfInterest = tag;
-                    tagFound = true;
-                    break;
-                }
-            }
-
-            if(tagFound)
-            {
-                double deadzone = 0.1;
-
-                telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                tagToTelemetry(tagOfInterest);
-                Orientation rot = Orientation.getOrientation(tagOfInterest.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
-                do {
-                    if (step2 == 2 && !desYaw && opModeIsActive()) {
-                        telemetry.addData("step: ", step2);
-                        telemetry.update();
-                        if (rot.firstAngle < -5) {
-                            turnLeft(0.2);
-                        } else if (rot.firstAngle > 5) {
-                            turnRight(0.2);
-                        } else {
-                            Idle();
-                            desYaw = true;
-                            telemetry.addData("desYaw: ", desYaw);
-                            telemetry.update();
-                            step2++;
-                        }
-                    }
-                    if (step == 3 && !desX && opModeIsActive()) {
-                        telemetry.addData("step: ", step);
-                        telemetry.update();
-                        if(tagOfInterest.pose.x < -deadzone) {
-                            strafeLeft(0.4);
-                        }
-                        else if(tagOfInterest.pose.x > deadzone) {
-                            // do something else
-                            strafeRight(0.4);
-                        } else {
-                            Idle();
-                            desX = true;
-                            telemetry.addData("desX: ", desX);
-                            telemetry.update();
-                            step++;
-                        }
-                    }
-                    if (step == 4 && !checkYaw && opModeIsActive()) {
-                        telemetry.addData("step: ", step);
-                        telemetry.update();
-                        if (rot.firstAngle < -5) {
-                            turnLeft(0.25);
-                        } else if (rot.firstAngle > 5) {
-                            turnRight(0.25);
-                        } else {
-                            Idle();
-                            checkYaw = true;
-                            telemetry.addData("checkYaw: ", checkYaw);
-                            telemetry.update();
-                            step++;
-                        }
-                    }
-                    if (step == 5 && !desZ && opModeIsActive()) {
-                        telemetry.addData("step: ", step);
-                        telemetry.update();
-                        if (tagOfInterest.pose.z > 0.60) {
-                            moveForward(0.20 );
-
-                        } else {
-                            Idle();
-                            desZ = true;
-                            telemetry.addData("desZ: ", desZ);
-                            telemetry.update();
-                            step++;
-                        }
-                    }
-                    if (step == 6 && !checkYaw2 && opModeIsActive()) {
-                        telemetry.addData("step: ", step);
-                        telemetry.update();
-                        if (rot.firstAngle < -2) {
-                            turnLeft(0.1);
-                        } else if (rot.firstAngle > 2) {
-                            turnRight(0.1);
-                        } else {
-                            Idle();
-                            checkYaw2 = true;
-                            telemetry.addData("checkYaw2: ", checkYaw2);
-                            telemetry.update();
-                            step++;
-                        }
-                    }
-                    if (desX && desZ) {
-                        telemetry.addLine("Reached the april tag.");
-                        telemetry.addLine("Placing the pixel");
-                        telemetry.update();
-                        serIn4.setPosition(0.75);
-                        serIn5.setPosition(0.75);
-                        TimeUnit.SECONDS.sleep(1);
-                        placedPixel = true;
-                    }
-                    if (placedPixel) {
-                        serIn1.setPower(0.15);
-                        serIn2.setPower(-0.15);
-                        TimeUnit.MILLISECONDS.sleep(500);
-                        serIn1.setPower(0);
-                        serIn2.setPower(0);
-                        TimeUnit.SECONDS.sleep(1);
-                        serIn4.setPosition(0);
-                        serIn5.setPosition(0);
-                        step++;
-                        moveBackward(0.3);
-                        TimeUnit.MILLISECONDS.sleep(300);
-                        Idle();
-                        TimeUnit.MILLISECONDS.sleep(300);
-                        turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(845);
-                        Idle();
-                        moveForward(0.5);
-                            /*Later, this distance needs to be altered
-                            because the distance between the april tags
-                            makes the distance to park longer or shorter.
-                             */
-                        TimeUnit.MILLISECONDS.sleep(820);
-                        Idle();
-                        turnLeft(0.5);
-                        TimeUnit.MILLISECONDS.sleep(700);
-                        Idle();
-                            /*
-                            moveForward(0.5);
-                            TimeUnit.MILLISECONDS.sleep(500);
-                            */
-                        Idle();
-                        telemetry.addLine("-------------------------------");
-                        telemetry.addLine("Autonomous complete.");
-                        telemetry.addLine("-------------------------------");
-                        telemetry.update();
-                    }
-
-                } while (step == 9 && desX && checkYaw && desZ && checkYaw2 && opModeIsActive() && parkNeeded);
-                    /*
-                        if (step == 66) {
-                            strafeRight(0.5);
-                            TimeUnit.MILLISECONDS.sleep(250);
-                            Idle();
-                            telemetry.addLine("Strafed Left");
-                            telemetry.addLine("Ready to park.");
-                            telemetry.update();
-                            moveForward(0.5);
-                            TimeUnit.MILLISECONDS.sleep(250);
-                            Idle();
-                            telemetry.addLine("Parked");
-                            telemetry.update();
-                            parkNeeded = false;
-                        } else if (!parkNeeded) {
-                            step++;
-                        }
-                        */
-
-            }
-            else
-            {
-                Idle();
-                telemetry.addLine("Don't see tag of interest :(");
-
-                if(tagOfInterest == null)
-                {
-                    telemetry.addLine("(The tag has never been seen)");
-                }
-                else
-                {
-                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                    tagToTelemetry(tagOfInterest);
-                }
-            }
-
-            telemetry.update();
-            sleep(20);
-        }
-        else
-        {
-            Idle();
-            telemetry.addLine("Don't see tag of interest :(");
-
-            if(tagOfInterest == null)
-            {
-                telemetry.addLine("(The tag has never been seen)");
-            }
-            else
-            {
-                telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                tagToTelemetry(tagOfInterest);
-            }
-
-        }
-    }
-    void tagToTelemetry(AprilTagDetection detection)
-    {
-        Orientation rot = Orientation.getOrientation(detection.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
-
-        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
-        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", rot.firstAngle));
-        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", rot.secondAngle));
-        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", rot.thirdAngle));
-    }
+    }   // end method telemetryTfod()
 
 }   // end class
