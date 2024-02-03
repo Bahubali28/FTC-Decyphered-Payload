@@ -160,27 +160,28 @@ public class Auton_BLUE_FRONT extends LinearOpMode {
                         telemetry.addLine("Center " + CENTER);
                         telemetry.update();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1000);
+                        TimeUnit.MILLISECONDS.sleep(1200);
                         Idle();
                         step++;
                         placed = true;
                         //now move back to X
-                        moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(300);
-                        Idle();
-                        turnLeft(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1050);
-                        Idle();
-                        PlacePixel();
-                        moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1450);
-                        Idle();
-                        TimeUnit.SECONDS.sleep(3);
-                        serIn1.setPower(0.5);
-                        serIn2.setPower(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1000);
-                        serIn1.setPower(0);
-                        serIn2.setPower(0);
+
+//                        moveBackward(0.5);
+//                        TimeUnit.MILLISECONDS.sleep(300);
+//                        Idle();
+//                        turnLeft(0.5);
+//                        TimeUnit.MILLISECONDS.sleep(1050);
+//                        Idle();-
+//                        PlacePixel();
+//                        moveForward(0.5);
+//                        TimeUnit.MILLISECONDS.sleep(1450);
+//                        Idle();
+//                        TimeUnit.SECONDS.sleep(3);
+//                        serIn1.setPower(0.5);
+//                        serIn2.setPower(0.5);
+//                        TimeUnit.MILLISECONDS.sleep(1000);
+//                        serIn1.setPower(0);
+//                        serIn2.setPower(0);
                     } else if (LEFT) {
                         telemetry.addLine("Right " + RIGHT);
                         telemetry.update();
@@ -192,53 +193,56 @@ public class Auton_BLUE_FRONT extends LinearOpMode {
                         step++;
                         placed = true;
                         //move back to x
-                        moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(400);
-                        Idle();
-                        turnLeft(0.5);
-                        TimeUnit.MILLISECONDS.sleep(750);
-                        Idle();
-                        PlacePixel();
-                        moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(900);
-                        Idle();
-                        TimeUnit.SECONDS.sleep(3);
-                        serIn1.setPower(0.5);
-                        serIn2.setPower(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1000);
-                        serIn1.setPower(0);
-                        serIn2.setPower(0);
+
+//                        moveBackward(0.5);
+//                        TimeUnit.MILLISECONDS.sleep(400);
+//                        Idle();
+//                        turnLeft(0.5);
+//                        TimeUnit.MILLISECONDS.sleep(750);
+//                        Idle();
+//                        PlacePixel();
+//                        moveForward(0.5);
+//                        TimeUnit.MILLISECONDS.sleep(900);
+//                        Idle();
+//                        TimeUnit.SECONDS.sleep(3);
+//                        serIn1.setPower(0.5);
+//                        serIn2.setPower(0.5);
+//                        TimeUnit.MILLISECONDS.sleep(1000);
+//                        serIn1.setPower(0);
+//                        serIn2.setPower(0);
                     } else if (RIGHT) {
                         telemetry.addLine("Left " + LEFT);
                         telemetry.update();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(150);
+                        TimeUnit.MILLISECONDS.sleep(300);
                         Idle();
                         TimeUnit.MILLISECONDS.sleep(550);
                         turnRight(0.5);
-                        TimeUnit.MILLISECONDS.sleep(550);
+                        TimeUnit.MILLISECONDS.sleep(300);
                         Idle();
                         moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(600);
+                        TimeUnit.MILLISECONDS.sleep(500);
+                        Idle();
                         step++;
                         placed = true;
                         //move back to x
-                        moveBackward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(550);
-                        Idle();
-                        turnLeft(0.5);
-                        PlacePixel();
-                        TimeUnit.MILLISECONDS.sleep(1450);
-                        Idle();
-                        moveForward(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1300);
-                        Idle();
-                        TimeUnit.SECONDS.sleep(3);
-                        serIn1.setPower(0.5);
-                        serIn2.setPower(0.5);
-                        TimeUnit.MILLISECONDS.sleep(1000);
-                        serIn1.setPower(0);
-                        serIn2.setPower(0);
+
+//                        moveBackward(0.5);
+//                        TimeUnit.MILLISECONDS.sleep(550);
+//                        Idle();
+//                        turnLeft(0.5);
+//                        PlacePixel();
+//                        TimeUnit.MILLISECONDS.sleep(1450);
+//                        Idle();
+//                        moveForward(0.5);
+//                        TimeUnit.MILLISECONDS.sleep(1300);
+//                        Idle();
+//                        TimeUnit.SECONDS.sleep(3);
+//                        serIn1.setPower(0.5);
+//                        serIn2.setPower(0.5);
+//                        TimeUnit.MILLISECONDS.sleep(1000);
+//                        serIn1.setPower(0);
+//                        serIn2.setPower(0);
                     }
                 } else {
                     Idle();
