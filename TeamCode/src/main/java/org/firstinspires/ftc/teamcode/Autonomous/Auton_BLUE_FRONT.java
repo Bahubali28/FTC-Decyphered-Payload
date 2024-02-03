@@ -111,8 +111,8 @@ public class Auton_BLUE_FRONT extends LinearOpMode {
         serIn2.setDirection(CRServo.Direction.FORWARD);
         serIn5.setDirection(Servo.Direction.REVERSE);
         serIn4.setDirection(Servo.Direction.FORWARD);
-        serIn5.setPosition(0);
-        serIn4.setPosition(0);
+        serIn5.setPosition(0.06);
+        serIn4.setPosition(0.06);
         initTfod();
         Seen = false;
         CENTER = false;
@@ -136,15 +136,16 @@ public class Auton_BLUE_FRONT extends LinearOpMode {
                     moveForward(0.5);
                     TimeUnit.MILLISECONDS.sleep(120);
                     Idle();
-                    TimeUnit.MILLISECONDS.sleep(100);
+                    TimeUnit.MILLISECONDS.sleep(300);
                     step++;
                 }
-                if (step == 2 && !LEFT && !RIGHT) {
-                    moveForward(0.5);
-                    TimeUnit.MILLISECONDS.sleep(100);
-                    Idle();
-                    step++;
-                }
+//                if (step == 2 && !LEFT && !RIGHT) {
+//                    moveForward(0.5);
+//                    TimeUnit.MILLISECONDS.sleep(100);
+//                    Idle();
+//                    TimeUnit.MILLISECONDS.sleep(300);
+//                    step++;
+//                }
 //                if (!exe2 && !LEFT && !CENTER){
 //                    strafeRight(0.5);
 //                    TimeUnit.MILLISECONDS.sleep(100);
@@ -309,7 +310,7 @@ public class Auton_BLUE_FRONT extends LinearOpMode {
         visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.73f);
+        tfod.setMinResultConfidence(0.83f);
 
         // Disable or re-enable the TFOD processor at any time.
         visionPortal.setProcessorEnabled(tfod, true);

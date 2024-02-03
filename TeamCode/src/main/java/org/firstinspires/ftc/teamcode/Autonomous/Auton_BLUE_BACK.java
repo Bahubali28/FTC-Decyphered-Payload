@@ -125,15 +125,16 @@ public class Auton_BLUE_BACK extends LinearOpMode {
                     moveForward(0.5);
                     TimeUnit.MILLISECONDS.sleep(120);
                     Idle();
-                    TimeUnit.MILLISECONDS.sleep(100);
+                    TimeUnit.MILLISECONDS.sleep(300);
                     step++;
                 }
-                if (step == 2 && !LEFT && !RIGHT) {
-                    moveForward(0.5);
-                    TimeUnit.MILLISECONDS.sleep(100);
-                    Idle();
-                    step++;
-                }
+//                if (step == 2 && !LEFT && !RIGHT) {
+//                    moveForward(0.5);
+//                    TimeUnit.MILLISECONDS.sleep(100);
+//                    Idle();
+//                    TimeUnit.MILLISECONDS.sleep(300);
+//                    step++;
+//                }
 //                if (!exe2 && !LEFT && !CENTER){
 //                    strafeRight(0.5);
 //                    TimeUnit.MILLISECONDS.sleep(100);
@@ -259,7 +260,7 @@ public class Auton_BLUE_BACK extends LinearOpMode {
         visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
-        tfod.setMinResultConfidence(0.73f);
+        tfod.setMinResultConfidence(0.83f);
 
         // Disable or re-enable the TFOD processor at any time.
         visionPortal.setProcessorEnabled(tfod, true);
