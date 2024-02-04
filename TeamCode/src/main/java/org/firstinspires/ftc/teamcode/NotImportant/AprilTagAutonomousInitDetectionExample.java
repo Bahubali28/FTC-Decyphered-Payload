@@ -266,8 +266,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
                         } else if (!parkNeeded) {
                             step++;
                         }
-                }
-
+                    }
                 }
                 else
                 {
